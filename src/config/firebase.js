@@ -1,17 +1,17 @@
+
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBBT7jka7a-7v3vY19BlSajamiedLrBTN0",
-    authDomain: "tiendanombretienda.firebaseapp.com",
-    projectId: "tiendanombretienda",
-    storageBucket: "tiendanombretienda.firebasestorage.app",
-    messagingSenderId: "408928911689",
-    appId: "1:408928911689:web:d8b313c7e15fc528661a98",
-    measurementId: "G-Y1DW47VEWZ"
-  };
-  
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  
+  apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
+  authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
+  projectId: "tiendahuertohogar-2ce3a",
+  storageBucket: "tiendahuertohogar-2ce3a.firebasestorage.app",
+  messagingSenderId: "857983411223",
+  appId: "1:857983411223:web:a1c200cd07b7fd63b36852",
+  measurementId: "G-TX342PY82Y"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
