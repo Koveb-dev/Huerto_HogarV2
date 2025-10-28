@@ -1,0 +1,8 @@
+<h1 id="bienvenido"></h1>
+<script>
+    const parametros = new URLSearchParams(window.location.search);
+    const nombreUsuario = parametros.get("nombre");
+    document.getElementById("bienvenido").innerText =
+        nombreUsuario ? `Bienvenido ${nombreUsuario}!` : "Bienvenido!";
+
+</script>
