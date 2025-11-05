@@ -11,14 +11,14 @@ export function validarRun(run) {
 }
 
 //Validación de edad minima 18 años
-function esMayorEdad(fecha) {
+export function esMayorEdad(fecha) {
     const hoy = new Date();
     const fechaNacimiento = new Date(fecha);
     let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
-    const mes  = hoy.getMonth() - fechaNacimiento.getMonth();
+    const mes = hoy.getMonth() - fechaNacimiento.getMonth();
 
     if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
-        edad --;
+        edad--;
     }
     return edad >= 18;
 }
