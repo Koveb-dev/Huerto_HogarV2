@@ -8,7 +8,8 @@ import PerfilCliente from "../components/pages/PerfilCliente";
 import Catalogo from "../components/pages/Catalogo";
 import Carrito from "../components/pages/Carrito";
 import Checkout from "../components/pages/Checkout";
-import CompraExitosa from "../components/pages/"
+import CompraExitosa from "../components/pages/CompraExitosa";
+import ErrorPago from "../components/pages/ErrorPago";
 
 const RouterConfig = () => (
     <Router>
@@ -16,6 +17,12 @@ const RouterConfig = () => (
             <Route exact path="/" component={Home} />
             <Route path="/perfil-admin" component={PerfilAdmin} />
             <Route path="/perfil-cliente" component={PerfilCliente} />
+            <Route path="/catalogo" component={Catalogo} />
+            <Route path="/carrito" component={Carrito} />
+            <Route path="/checkout" component={Checkout} />
+            <Route path="/exito" component={CompraExitosa} />
+            <Route path="/error" component={ErrorPago} />
+            
         </Switch>
     </Router>
 );
