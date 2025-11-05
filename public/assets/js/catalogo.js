@@ -15,10 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Configuración de Firebase
     const firebaseConfig = {
-        apiKey: "AIzaSyBBT7jka7a-7v3vY19BlSajamiedLrBTN0",
-        authDomain: "tiendanombretienda.firebaseapp.com",
-        projectId: "tiendanombretienda",
+        apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
+        authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
+        projectId: "tiendahuertohogar-2ce3a",
     };
+
 
     // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
@@ -115,16 +116,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Obtener un icono representativo para cada categoría
     function obtenerIconoCategoria(categoria) {
         const iconos = {
-            'Ropa': '👕',
-            'Tecnología': '💻',
-            'Electrónica': '📱',
-            'Hogar': '🏠',
-            'Deportes': '⚽',
-            'Zapatos': '👟',
-            'Accesorios': '🕶️',
-            'Libros': '📚',
-            'Juguetes': '🧸',
-            'Belleza': '💄'
+            'Frutas': '🍎',
+            'Verduras': '🥬',
+            'Semillas': '🌱',
+            'Lacteos': '🥛',
+            'Productos Organicos': '🍯'
+
+
+
         };
         return iconos[categoria] || '📦';
     }
