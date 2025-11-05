@@ -1,8 +1,15 @@
-import { addUser } from "./services/firestoreService";
-import { validarCorreo, validarRun, esMayorEdad } from "./utils/script";
+import { addUser } from './services/firestoreService';
+import { validarCorreo, validarRun, esMayorEdad } from './utils/script';
 
-//Espera que el DOM esté listo
+function esPaginaEstatica() {
+  return window.location.pathname.includes('.html') ||
+    window.location.pathname.includes('/assets/');
+}
+
+// Espera que el DOM esté listo
 document.addEventListener("DOMContentLoaded", () => {
+
+
   const form = document.getElementById("formUsuario");
   const runInput = document.getElementById("run");
   const nombreInput = document.getElementById("nombre");
@@ -10,8 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const claveInput = document.getElementById("clave");
   const fechaInput = document.getElementById("fecha");
   const mensaje = document.getElementById("mensaje");
-  //validar si hay o no conxión con el forulario de registro de  usuario
-  if (!form) return console.log("No se encontro #formUsuario")
+
+  if (!form) return;// Si no estamos en la página de registro, salir
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -23,26 +30,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const clave = claveInput.value;
     const fecha = fechaInput.value;
 
-    //Validar el ingreso correcto de los datos para el registro
-    if (!validarRun(run)) return mensaje.innerText = "Run incorrecto";
-    if (!nombre) return mensaje.innerText = "Nombre en blanco";
+    // Validaciones
+    if (!validarRun(run)) return mensaje.innerText = "RUN incorrecto";
+    if (!nombre) return mensaje.innerText = "Nombre vacío";
     if (!validarCorreo(correo)) return mensaje.innerText = "Correo incorrecto";
-    if (!esMayorEdad(fecha)) return mensaje.innerText = "Debe ser mayor de 18 años";
+    if (!esMayorEdad(fecha)) return mensaje.innerText = "Debe ser mayor a 18 años";
 
     try {
       await addUser({ run, nombre, correo, clave, fecha });
-      mensaje.innerText = "Formulario se envio correctamente";
+      mensaje.innerText = "Formulario enviado correctamente";
 
       setTimeout(() => {
-        window.location.href =
-          correo.toLowerCase() === "admin@duoc.cl"
-            ? `assets/page/perfilAdmin.html?nombre=${encodeURIComponent(nombre)}`
-            : `assets/page/perfilCliente.html?nombre=${encodeURIComponent(nombre)}`
+        window.location.href = "login.html";
       }, 1000);
-    } catch (error) {
-      console.error("Error al guardar usuario: ", error);
-      mensaje.innerText = "Error al guardar usuario en Firebase"
 
+      // Redirección según correo
+      //setTimeout(() => {
+      //    window.location.href =
+      //        correo.toLowerCase() === "admin@duoc.cl"
+      //            ? `assets/page/perfilAdmin.html?nombre=${encodeURIComponent(nombre)}`
+      //            : `assets/page/perfilCliente.html?nombre=${encodeURIComponent(nombre)}`;
+      //}, 1000);
+    } catch (error) {
+      console.error("Error al guardar usuario:", error);
+      mensaje.innerText = "Error al guardar usuario en Firebase";
     }
   });
 });
