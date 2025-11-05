@@ -1,10 +1,13 @@
 // Configuración de Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyBBT7jka7a-7v3vY19BlSajamiedLrBTN0",
-    authDomain: "tiendanombretienda.firebaseapp.com",
-    projectId: "tiendanombretienda",
+    apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
+    authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
+    projectId: "tiendahuertohogar-2ce3a",
+    storageBucket: "tiendahuertohogar-2ce3a.appspot.com",
+    messagingSenderId: "857983411223",
+    appId: "1:857983411223:web:a1c200cd07b7fd63b36852",
+    measurementId: "G-TX342PY82Y"
 };
-
 // Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -14,7 +17,7 @@ let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 let productosOferta = [];
 
 // Inicializar la aplicación cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     inicializarCarrito();
     cargarProductosOferta();
     configurarEventos();
@@ -39,7 +42,7 @@ async function cargarProductosOferta() {
             id: doc.id,
             ...doc.data()
         }));
-        
+
         // Filtrar productos con oferta (precio anterior)
         const productosConOferta = productosOferta.filter(producto => producto.precioAnterior);
         renderizarProductosOferta(productosConOferta);
@@ -53,7 +56,7 @@ async function cargarProductosOferta() {
  */
 function renderizarProductosOferta(productos) {
     const contenedor = document.getElementById('productosOferta');
-    
+
     if (productos.length === 0) {
         contenedor.innerHTML = '<p>No hay productos en oferta en este momento.</p>';
         return;
@@ -81,7 +84,7 @@ function renderizarProductosOferta(productos) {
 
     // Agregar eventos a los botones de añadir
     document.querySelectorAll('.btn-agregar-oferta').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const productId = this.getAttribute('data-id');
             agregarProductoAlCarrito(productId);
         });
@@ -93,7 +96,7 @@ function renderizarProductosOferta(productos) {
  */
 function renderizarCarrito() {
     const tbody = document.getElementById('tablaCarritoBody');
-    
+
     if (carrito.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -140,17 +143,17 @@ function renderizarCarrito() {
  */
 function agregarProductoAlCarrito(productId) {
     const producto = productosOferta.find(p => p.id === productId);
-    
+
     if (producto) {
         // Verificar stock antes de agregar
         if (producto.stock <= 0) {
             mostrarNotificacion('Producto sin stock disponible', 'error');
             return;
         }
-        
+
         // Verificar si el producto ya está en el carrito
         const productoExistente = carrito.find(item => item.id === productId);
-        
+
         if (productoExistente) {
             productoExistente.cantidad = (productoExistente.cantidad || 1) + 1;
         } else {
@@ -159,14 +162,14 @@ function agregarProductoAlCarrito(productId) {
                 cantidad: 1
             });
         }
-        
+
         guardarCarrito();
         renderizarCarrito();
         calcularTotal();
-        
+
         // ACTUALIZAR STOCK EN FIREBASE - AGREGAR ESTA LÍNEA
         actualizarStockFirebase(productId, 1);
-        
+
         mostrarNotificacion(`"${producto.nombre}" agregado al carrito`);
     }
 }
@@ -178,15 +181,15 @@ async function actualizarStockFirebase(productId, cantidad) {
     try {
         const productoRef = db.collection("producto").doc(productId);
         const productoDoc = await productoRef.get();
-        
+
         if (productoDoc.exists) {
             const stockActual = productoDoc.data().stock;
             const nuevoStock = stockActual - cantidad;
-            
+
             await productoRef.update({
                 stock: nuevoStock
             });
-            
+
             console.log(`Stock actualizado: ${productoDoc.data().nombre} - Nuevo stock: ${nuevoStock}`);
         }
     } catch (error) {
@@ -201,15 +204,15 @@ async function restaurarStockFirebase(productId, cantidad) {
     try {
         const productoRef = db.collection("producto").doc(productId);
         const productoDoc = await productoRef.get();
-        
+
         if (productoDoc.exists) {
             const stockActual = productoDoc.data().stock;
             const nuevoStock = stockActual + cantidad;
-            
+
             await productoRef.update({
                 stock: nuevoStock
             });
-            
+
             console.log(`Stock restaurado: ${productoDoc.data().nombre} - Nuevo stock: ${nuevoStock}`);
         }
     } catch (error) {
@@ -223,18 +226,18 @@ async function restaurarStockFirebase(productId, cantidad) {
  */
 function aumentarCantidad(index) {
     const producto = carrito[index];
-    
+
     // Verificar stock antes de aumentar
     if (producto.stock <= producto.cantidad) {
         mostrarNotificacion('No hay suficiente stock disponible', 'error');
         return;
     }
-    
+
     carrito[index].cantidad = (carrito[index].cantidad || 1) + 1;
     guardarCarrito();
     renderizarCarrito();
     calcularTotal();
-    
+
     // Actualizar stock en Firebase
     actualizarStockFirebase(producto.id, 1);
 }
@@ -245,13 +248,13 @@ function aumentarCantidad(index) {
  */
 function disminuirCantidad(index) {
     const producto = carrito[index];
-    
+
     if (carrito[index].cantidad > 1) {
         carrito[index].cantidad--;
         guardarCarrito();
         renderizarCarrito();
         calcularTotal();
-        
+
         // Restaurar stock en Firebase
         restaurarStockFirebase(producto.id, 1);
     }
@@ -263,7 +266,7 @@ function disminuirCantidad(index) {
 function eliminarDelCarrito(index) {
     const producto = carrito[index];
     const cantidadEliminada = producto.cantidad || 1;
-    
+
     carrito.splice(index, 1);
     guardarCarrito();
     renderizarCarrito();
@@ -281,7 +284,7 @@ function calcularTotal() {
     const total = carrito.reduce((sum, producto) => {
         return sum + ((producto.precio || 0) * (producto.cantidad || 1));
     }, 0);
-    
+
     document.getElementById('totalCarrito').textContent = total.toLocaleString('es-CL');
     actualizarCarritoHeader();
 }
@@ -293,7 +296,7 @@ function actualizarCarritoHeader() {
     const total = carrito.reduce((sum, producto) => {
         return sum + ((producto.precio || 0) * (producto.cantidad || 1));
     }, 0);
-    
+
     document.querySelector('.carrito-total').textContent = total.toLocaleString('es-CL');
 }
 
@@ -312,7 +315,7 @@ function limpiarCarrito() {
         alert('El carrito ya está vacío');
         return;
     }
-    
+
     if (confirm('¿Estás seguro de que quieres limpiar todo el carrito?')) {
         carrito = [];
         guardarCarrito();
@@ -330,7 +333,7 @@ function irAlCheckout() {
         alert('Agrega productos al carrito antes de continuar');
         return;
     }
-    
+
     window.location.href = 'checkout.html';
 }
 
@@ -353,7 +356,7 @@ function mostrarNotificacion(mensaje) {
     `;
     notificacion.textContent = mensaje;
     document.body.appendChild(notificacion);
-    
+
     setTimeout(() => {
         notificacion.remove();
     }, 3000);
