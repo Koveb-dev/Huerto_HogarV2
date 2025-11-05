@@ -1,10 +1,13 @@
 // Configuración de Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyBBT7jka7a-7v3vY19BlSajamiedLrBTN0",
-    authDomain: "tiendanombretienda.firebaseapp.com",
-    projectId: "tiendanombretienda",
+    apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
+    authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
+    projectId: "tiendahuertohogar-2ce3a",
+    storageBucket: "tiendahuertohogar-2ce3a.appspot.com",
+    messagingSenderId: "857983411223",
+    appId: "1:857983411223:web:a1c200cd07b7fd63b36852",
+    measurementId: "G-TX342PY82Y"
 };
-
 // Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -33,7 +36,7 @@ const regionesComunas = {
 };
 
 // Inicializar checkout cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     inicializarCheckout();
     configurarEventosCheckout();
     cargarRegiones(); // Cargar las regiones al iniciar
@@ -44,10 +47,10 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function cargarRegiones() {
     const selectRegion = document.getElementById('region');
-    
+
     // Ordenar regiones alfabéticamente
     const regionesOrdenadas = Object.keys(regionesComunas).sort();
-    
+
     regionesOrdenadas.forEach(region => {
         const option = document.createElement('option');
         option.value = region;
@@ -62,10 +65,10 @@ function cargarRegiones() {
 function cargarComunas(region) {
     const selectComuna = document.getElementById('comuna');
     const comunas = regionesComunas[region] || [];
-    
+
     // Limpiar select de comunas
     selectComuna.innerHTML = '<option value="">Selecciona una comuna</option>';
-    
+
     // Ordenar comunas alfabéticamente
     comunas.sort().forEach(comuna => {
         const option = document.createElement('option');
@@ -73,7 +76,7 @@ function cargarComunas(region) {
         option.textContent = comuna;
         selectComuna.appendChild(option);
     });
-    
+
     // Habilitar el select de comunas
     selectComuna.disabled = false;
 }
@@ -92,7 +95,7 @@ function inicializarCheckout() {
  */
 function renderizarProductosCheckout() {
     const tbody = document.getElementById('tablaCheckoutBody');
-    
+
     if (carrito.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -129,7 +132,7 @@ function actualizarTotales() {
     const total = carrito.reduce((sum, producto) => {
         return sum + ((producto.precio || 0) * (producto.cantidad || 1));
     }, 0);
-    
+
     document.getElementById('totalPagar').textContent = total.toLocaleString('es-CL');
     document.getElementById('montoPagar').textContent = total.toLocaleString('es-CL');
 }
@@ -141,7 +144,7 @@ function actualizarCarritoHeader() {
     const total = carrito.reduce((sum, producto) => {
         return sum + ((producto.precio || 0) * (producto.cantidad || 1));
     }, 0);
-    
+
     document.querySelector('.carrito-total').textContent = total.toLocaleString('es-CL');
 }
 
@@ -180,16 +183,16 @@ async function procesarPago() {
 
         // Guardar en Firestore
         const docRef = await db.collection('compras').add(compra);
-        
+
         // Simular procesamiento de pago (50% de éxito)
         const pagoExitoso = Math.random() > 0.5;
-        
+
         if (pagoExitoso) {
             // Actualizar estado en Firestore
             await db.collection('compras').doc(docRef.id).update({
                 estado: 'completada'
             });
-            
+
             // Limpiar carrito y redirigir a éxito
             localStorage.removeItem('carrito');
             localStorage.setItem('ultimaCompra', JSON.stringify({
@@ -202,7 +205,7 @@ async function procesarPago() {
             await db.collection('compras').doc(docRef.id).update({
                 estado: 'error_pago'
             });
-            
+
             // Redirigir a error
             localStorage.setItem('ultimaCompra', JSON.stringify({
                 ...compra,
@@ -223,7 +226,7 @@ async function procesarPago() {
 function validarFormularios() {
     const formCliente = document.getElementById('formCliente');
     const formDireccion = document.getElementById('formDireccion');
-    
+
     return formCliente.checkValidity() && formDireccion.checkValidity();
 }
 
@@ -265,9 +268,9 @@ function generarNumeroOrden() {
  */
 function configurarEventosCheckout() {
     document.getElementById('btnPagarAhora').addEventListener('click', procesarPago);
-    
+
     // Evento para cargar comunas cuando se selecciona una región
-    document.getElementById('region').addEventListener('change', function() {
+    document.getElementById('region').addEventListener('change', function () {
         if (this.value) {
             cargarComunas(this.value);
         } else {
@@ -277,11 +280,11 @@ function configurarEventosCheckout() {
             selectComuna.disabled = true;
         }
     });
-    
+
     // Validación en tiempo real
     const inputs = document.querySelectorAll('input[required], select[required]');
     inputs.forEach(input => {
-        input.addEventListener('blur', function() {
+        input.addEventListener('blur', function () {
             validarCampo(this);
         });
     });

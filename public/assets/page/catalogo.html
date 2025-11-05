@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo - Mi Tienda</title>
+  <title>Catálogo - Huerto hogar</title>
   <link rel="stylesheet" href="../css/catalogo.css">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
+
 <body>
   <!-- HEADER -->
   <header class="header">
@@ -36,9 +38,10 @@
         <a href="#" class="nav-link">Blog</a>
         <a href="#" class="nav-link">Contacto</a>
       </div>
-      
+
       <div class="nav-right">
-        <button class="btn-carrito" onclick="window.location.href='carrito.html'"> <!--Cambiar a "carrito" para React Router-->
+        <button class="btn-carrito" onclick="window.location.href='carrito.html'">
+          <!--Cambiar a "carrito" para React Router-->
           <span class="carrito-icon">🛒</span>
           Total: $<span class="carrito-total">0</span>
         </button>
@@ -51,7 +54,7 @@
     <!-- CARDS DE CATEGORÍAS -->
     <section class="categorias-section">
       <h2 class="section-title">Categorías</h2>
-       <button id="btnVerTodos" class="btn-ver-todos">Todos los productos</button>
+      <button id="btnVerTodos" class="btn-ver-todos">Todos los productos</button>
       <div id="cardsCategorias" class="categorias-grid"></div>
     </section>
 
@@ -64,4 +67,5 @@
 
   <script src="../js/catalogo.js"></script>
 </body>
+
 </html>
