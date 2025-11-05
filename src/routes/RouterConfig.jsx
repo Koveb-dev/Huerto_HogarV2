@@ -3,6 +3,13 @@ import Home from "../components/pages/Home";
 import PerfilAdmin from "../components/pages/PerfilAdmin";
 import PerfilCliente from "../components/pages/PerfilCliente";
 
+
+
+import Catalogo from "../components/pages/Catalogo";
+import Carrito from "../components/pages/Carrito";
+import Checkout from "../components/pages/Checkout";
+import CompraExitosa from "../components/pages/"
+
 const RouterConfig = () => (
     <Router>
         <Switch>

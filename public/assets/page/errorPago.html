@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compra Exitosa - Mi Tienda</title>
+  <title>Error en Pago - Mi Tienda</title>
   <link rel="stylesheet" href="../css/catalogo.css">
   <link rel="stylesheet" href="../css/carrito.css">
 </head>
@@ -45,15 +45,15 @@
 
   <!-- MAIN CONTENT -->
   <main class="main">
-    <div class="exito-container">
+    <div class="error-container">
       <!-- Encabezado -->
-      <div class="exito-header">
-        <span class="codigo-orden" id="codigoOrden">ORDEN20240705</span>
-        <div class="exito-titulo">
-          <span class="icono-exito">✅</span>
-          <h1>Se ha realizado la compra nro <span id="numeroCompra">#000001</span></h1>
+      <div class="error-header">
+        <div class="error-titulo">
+          <span class="icono-error">❌</span>
+          <h1>No se pudo realizar el pago <span id="numeroError">#000001</span></h1>
         </div>
-        <p class="exito-subtitulo">Completa la siguiente información</p>
+        <h2 class="error-subtitulo">Detalle de compra</h2>
+        <button id="btnReintentarPago" class="btn-reintentar-pago">Volver a realizar el pago</button>
       </div>
 
       <!-- Información del Cliente -->
@@ -64,15 +64,15 @@
           <div class="form-row">
             <div class="form-group">
               <label>Nombre</label>
-              <input type="text" id="exitoNombre" readonly>
+              <input type="text" id="errorNombre" readonly>
             </div>
             <div class="form-group">
               <label>Apellidos</label>
-              <input type="text" id="exitoApellidos" readonly>
+              <input type="text" id="errorApellidos" readonly>
             </div>
             <div class="form-group">
               <label>Correo</label>
-              <input type="email" id="exitoCorreo" readonly>
+              <input type="email" id="errorCorreo" readonly>
             </div>
           </div>
         </form>
@@ -86,26 +86,26 @@
           <div class="form-row">
             <div class="form-group">
               <label>Calle</label>
-              <input type="text" id="exitoCalle" readonly>
+              <input type="text" id="errorCalle" readonly>
             </div>
             <div class="form-group">
               <label>Departamento</label>
-              <input type="text" id="exitoDepartamento" readonly>
+              <input type="text" id="errorDepartamento" readonly>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label>Región</label>
-              <input type="text" id="exitoRegion" readonly>
+              <input type="text" id="errorRegion" readonly>
             </div>
             <div class="form-group">
               <label>Comuna</label>
-              <input type="text" id="exitoComuna" readonly>
+              <input type="text" id="errorComuna" readonly>
             </div>
           </div>
           <div class="form-group full-width">
             <label>Indicaciones</label>
-            <textarea id="exitoIndicaciones" readonly></textarea>
+            <textarea id="errorIndicaciones" readonly></textarea>
           </div>
         </form>
       </section>
@@ -122,30 +122,22 @@
               <th>Subtotal $</th>
             </tr>
           </thead>
-          <tbody id="tablaExitoBody">
-            <!-- Productos de la compra exitosa -->
+          <tbody id="tablaErrorBody">
+            <!-- Productos del error de pago -->
           </tbody>
         </table>
       </div>
 
-      <!-- Total Pagado -->
+      <!-- Total -->
       <div class="total-pagado-container">
         <div class="total-pagado">
-          <span class="total-text">Total Pagado: $</span>
-          <span id="totalPagado" class="total-precio">0</span>
+          <span class="total-text">Total: $</span>
+          <span id="totalError" class="total-precio">0</span>
         </div>
-      </div>
-
-      <!-- Botones Finales -->
-      <div class="exito-footer">
-        <button id="btnImprimirPDF" class="btn-imprimir-pdf">Imprimir Boleta en PDF</button>
-        <button id="btnEnviarEmail" class="btn-enviar-email">Enviar Boleta por Email</button>
       </div>
     </div>
   </main>
 
-  <!-- Incluir SweetAlert2 antes de tu script -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="../js/compraExitosa.js"></script>
+  <script src="../js/errorPago.js"></script>
 </body>
 </html>
