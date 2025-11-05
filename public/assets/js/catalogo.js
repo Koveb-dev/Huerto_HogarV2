@@ -14,12 +14,17 @@ document.addEventListener("DOMContentLoaded", () => {
     let categoriaActiva = 'todos'; // Categoría actualmente seleccionada
 
     // Configuración de Firebase
+
+
     const firebaseConfig = {
         apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
         authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
         projectId: "tiendahuertohogar-2ce3a",
+        storageBucket: "tiendahuertohogar-2ce3a.firebasestorage.app",
+        messagingSenderId: "857983411223",
+        appId: "1:857983411223:web:a1c200cd07b7fd63b36852",
+        measurementId: "G-TX342PY82Y"
     };
-
 
     // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
