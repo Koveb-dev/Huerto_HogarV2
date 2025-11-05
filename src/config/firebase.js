@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-
+import { getAuth } from "firebase/auth"; //Importar auth
 const firebaseConfig = {
   apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
   authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
@@ -19,3 +19,4 @@ export const db = getFirestore(app); // ✅ AGREGA 'export' AQUÍ
 
 // Opcional: exporta todo lo que necesites
 export { app, analytics };
+export const auth = getAuth(app); //Se exporta auth 
