@@ -1,11 +1,16 @@
 import { db } from "../config/firebase";
-import { collection, addDoc, getDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 
 export async function addUser(user) {
-    return await addDoc(collection(db, "usuario"), { ...user, createdAt: new Date()});
-}
-
-export async function getProduct(params) {
-        const snap = await getDoc(collection(db,"productos"));
-        return snap.docs.map(d=>({id: d.id, ...d.data()}));
+    try {
+        const docRef = await addDoc(collection(db, "usuario"), {
+            ...user,
+            createdAt: new Date(),
+        });
+        console.log("Usuario registrado con ID: ", docRef.id);
+        return docRef;
+    } catch (error) {
+        console.error("Error al registrar usuario: ", error);
+        return error;
+    }
 }
