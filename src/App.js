@@ -3,13 +3,17 @@ import './App.css';
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import RouterConfig from "./routes/RouterConfig";
+import { UserProvider } from "./contexts/UserContext";
+import { CartProvider } from "./contexts/CartContext";
 
 function App() {
   return (
-    <UserProvider> {/* Agregamos UserProvider para envolver la app y y proporcionar el contexto de usuario*/}
-      <Router>
-        <RouterConfig />
-      </Router>
+    <UserProvider>
+      <CartProvider>
+        <Router>
+          <RouterConfig />
+        </Router>
+      </CartProvider>
     </UserProvider>
   );
 }

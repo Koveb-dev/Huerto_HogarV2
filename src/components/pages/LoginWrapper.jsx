@@ -1,20 +1,45 @@
 import { useContext, useEffect } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { useHistory } from "react-router-dom";
-// Componente que revisa si hay usuario logueado en localStorage y actualiza el contexto
+import { auth } from "../../config/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { getUserProfile } from "../../services/firebase";
+
+// Componente que revisa la autenticación de Firebase y actualiza el contexto
 const LoginWrapper = () => {
-    const { setUser } = useContext(UserContext);
+    const { setUser, setUserProfile } = useContext(UserContext);
     const history = useHistory();
 
     useEffect(() => {
-        // Revisar si hay usuario logueado en localStorage
-        const usuario = JSON.parse(localStorage.getItem("usuario"));
-        if (usuario) {
-            setUser(usuario); // Actualizar contexto
-            // Redirigir a la página correspondiente según el rol
-            history.push(usuario.rol === "admin" ? "/perfil-admin" : "/perfil-cliente");
-        }
-    }, [setUser, history]); // Solo se ejecuta una vez al montar el componente
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Usuario autenticado con Firebase
+                setUser(user);
+                
+                // Obtener perfil adicional desde Firestore
+                const profileResult = await getUserProfile(user.uid);
+                if (profileResult.success) {
+                    setUserProfile(profileResult.data);
+                    
+                    // Redirigir según el rol (manteniendo tu lógica original)
+                    history.push(profileResult.data.rol === "admin" ? "/perfil-admin" : "/perfil-cliente");
+                } else {
+                    // Si no hay perfil, redirigir a perfil-cliente por defecto
+                    history.push("/perfil-cliente");
+                }
+            } else {
+                // No hay usuario autenticado
+                setUser(null);
+                setUserProfile(null);
+                
+                // Opcional: Redirigir al login si no está autenticado
+                // history.push("/login");
+            }
+        });
+
+        // Cleanup subscription
+        return () => unsubscribe();
+    }, [setUser, setUserProfile, history]);
 
     return null; // No renderiza nada
 };
