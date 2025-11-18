@@ -4,34 +4,504 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Huerto Hogar</title>
-    <link rel="stylesheet" href="http://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>HuertoHogar - Productos Frescos del Campo a tu Hogar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #F7F7F7;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2E8B57;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 600;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li a:hover {
+            color: #2E8B57;
+        }
+
+        .bi-cart3 {
+            margin-right: 5px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #2E8B57;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .btn:hover {
+            background-color: #236b47;
+            transform: translateY(-3px);
+        }
+
+        .btn-highlight {
+            background-color: #FFD700;
+            color: #333;
+        }
+
+        .btn-highlight:hover {
+            background-color: #e6c200;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            color: #8B4513;
+            font-size: 2.2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 10px;
+            transition: transform 0.3s;
+            background-color: #F7F7F7;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-item i {
+            font-size: 3rem;
+            color: #2E8B57;
+            margin-bottom: 20px;
+        }
+
+        .feature-item h3 {
+            color: #8B4513;
+            margin-bottom: 15px;
+        }
+
+        /* Catalog Preview Section */
+        .catalog-preview {
+            padding: 80px 0;
+            background-color: #F7F7F7;
+            text-align: center;
+        }
+
+        .catalog-preview p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: #555;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 0;
+            background-color: white;
+            text-align: center;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: #F7F7F7;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: #8B4513;
+        }
+
+        /* Locations Section */
+        .locations {
+            padding: 80px 0;
+            background-color: #F7F7F7;
+            text-align: center;
+        }
+
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .location-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .location-item h4 {
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 80px 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        /* Footer */
+        footer {
+            background: #2E8B57;
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-section i {
+            margin-right: 10px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #FFD700;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header .container {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 5px 10px;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <header>
-        <h4>Logo</h4>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="assets/page/nosotros.html">Nosotros</a></li>
-                <li><a href="assets/page/contacto.html">Contacto</a></li>
-                <li><a href="assets/page/catalogo.html">Catalogo</a></li>
-                <li><a href="assets/page/carrito.html"><i class="bi bi-cart3"></i> Carrito(0)</a></li>
-                <li><a href="assets/page/login.html">Login</a></li>
-            </ul>
-        </nav>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>HuertoHogar</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="/assets/page/nosotros.html">Nosotros</a></li>
+                    <li><a href="/assets/page/contacto.html">Contacto</a></li>
+                    <li><a href="/assets/page/catalogo.html">Catalogo</a></li>
+                    <li><a href="/assets/page/carrito.html"><i class="bi bi-cart3"></i> Carrito(0)</a></li>
+                    <li><a href="/assets/page/login.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
+
     <main>
-        <section>
-            <div>
-                <h1>Bienvenido a Huerto Hogar</h1>
-                <a href="assets/page/registro.html">
-                    Crear Cuenta
-                </a>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>Productos Frescos del Campo a tu Hogar</h1>
+                <p>Con más de 6 años conectando a las familias chilenas con la frescura y calidad del campo</p>
+                <a href="/assets/page/catalogo.html" class="btn">Ver Catálogo Completo</a>
+                <a href="/assets/page/registro.html" class="btn btn-highlight">Crear Cuenta</a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">¿Por qué elegir HuertoHogar?</h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <i class="fas fa-shipping-fast"></i>
+                        <h3>Envío Rápido</h3>
+                        <p>Recibe tus productos frescos en 24-48 horas directamente desde el campo</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-seedling"></i>
+                        <h3>Productos Frescos</h3>
+                        <p>Garantizamos la máxima frescura y calidad en todos nuestros productos</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <h3>Precios Justos</h3>
+                        <p>Comercio directo con agricultores locales, sin intermediarios</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-recycle"></i>
+                        <h3>Sostenibilidad</h3>
+                        <p>Apoyamos prácticas agrícolas sostenibles y el comercio justo</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catalog Preview Section -->
+        <section class="catalog-preview">
+            <div class="container">
+                <h2 class="section-title">Descubre Nuestro Catálogo</h2>
+                <p>Explora nuestra amplia variedad de frutas, verduras y productos agrícolas frescos, todos disponibles en nuestro catálogo digital actualizado en tiempo real.</p>
+                <a href="/assets/page/catalogo.html" class="btn">Ver Catálogo Completo</a>
+            </div>
+        </section>
+
+        <!-- Locations Section -->
+        <section class="locations">
+            <div class="container">
+                <h2 class="section-title">Nuestra Presencia en Chile</h2>
+                <p>Operamos en más de 9 puntos a lo largo del país, llevando frescura a hogares de:</p>
+                <div class="locations-grid">
+                    <div class="location-item">
+                        <h4>Santiago</h4>
+                    </div>
+                    <div class="location-item">
+                        <h4>Puerto Montt</h4>
+                    </div>
+                    <div class="location-item">
+                        <h4>Villarica</h4>
+                    </div>
+                    <div class="location-item">
+                        <h4>Nacimiento</h4>
+                    </div>
+                    <div class="location-item">
+                        <h4>Viña del Mar</h4>
+                    </div>
+                    <div class="location-item">
+                        <h4>Valparaíso</h4>
+                    </div>
+                    <div class="location-item">
+                        <h4>Concepción</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials">
+            <div class="container">
+                <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"Desde que compro en HuertoHogar, mis hijos comen más verduras. La frescura se nota en el sabor y la calidad es incomparable."</p>
+                        <p class="testimonial-author">- María González, Santiago</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"Increíble servicio. Los productos llegan siempre frescos y a tiempo. Me encanta apoyar a los agricultores locales directamente."</p>
+                        <p class="testimonial-author">- Carlos Rodríguez, Valparaíso</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"La diferencia de sabor es notable. Los tomates saben a tomate de verdad, no como los del supermercado. ¡Recomendado 100%!"</p>
+                        <p class="testimonial-author">- Ana Silva, Concepción</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta">
+            <div class="container">
+                <h2>¿Listo para disfrutar de productos frescos?</h2>
+                <p>Únete a miles de familias chilenas que ya reciben lo mejor del campo directamente en sus hogares</p>
+                <a href="/assets/page/registro.html" class="btn btn-highlight">Crear Cuenta Gratis</a>
             </div>
         </section>
     </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>HuertoHogar</h3>
+                    <p>Conectando el campo con tu hogar desde 2017</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <p><i class="fas fa-phone"></i> +56 9 1234 5678</p>
+                    <p><i class="fas fa-envelope"></i> info@huertohogar.cl</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 HuertoHogar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>
