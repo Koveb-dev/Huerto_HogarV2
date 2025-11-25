@@ -3,8 +3,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const correoInput = document.getElementById("correoLogin");
     const claveInput = document.getElementById("claveLogin");
     const mensaje = document.getElementById("mensajeLogin");
+    const loginCard = document.querySelector('.login-card');
 
     if (!form) return console.error("No se encontró #formLogin");
+
+    // Aplicar animación al cargar
+    setTimeout(() => {
+        if (loginCard) loginCard.classList.add('animate');
+    }, 100);
 
     // Inicializar Firebase
     const firebaseConfig = {
@@ -26,12 +32,15 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         mensaje.innerText = "";
+        mensaje.classList.add("d-none");
 
         const correo = correoInput.value.trim().toLowerCase();
         const clave = claveInput.value;
 
         if (!correo || !clave) {
-            mensaje.style.color = "red";
+            mensaje.classList.remove("d-none");
+            mensaje.classList.remove("alert-success");
+            mensaje.classList.add("alert-danger");
             mensaje.innerText = "Debes completar correo y clave";
             return;
         }
@@ -44,14 +53,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 const usuario = { nombre: "Administrador", correo, rol: "admin" };
                 localStorage.setItem("usuario", JSON.stringify(usuario));
 
-                mensaje.style.color = "green";
+                mensaje.classList.remove("d-none");
+                mensaje.classList.remove("alert-danger");
+                mensaje.classList.add("alert-success");
                 mensaje.innerText = "Bienvenido Administrador, redirigiendo...";
                 setTimeout(() => {
                     window.location.href = `perfilAdmin.html`;
                 }, 1000);
             } catch (error) {
                 console.error("Error login admin:", error);
-                mensaje.style.color = "red";
+                mensaje.classList.remove("d-none");
+                mensaje.classList.remove("alert-success");
+                mensaje.classList.add("alert-danger");
                 mensaje.innerText = "Credenciales incorrectas para administrador";
             }
             return;
@@ -72,18 +85,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 const usuario = { nombre, correo, rol: "cliente" };
                 localStorage.setItem("usuario", JSON.stringify(usuario));
 
-                mensaje.style.color = "green";
+                mensaje.classList.remove("d-none");
+                mensaje.classList.remove("alert-danger");
+                mensaje.classList.add("alert-success");
                 mensaje.innerText = "Bienvenido Cliente, redirigiendo...";
                 setTimeout(() => {
                     window.location.href = `perfilCliente.html`;
                 }, 1000);
             } else {
-                mensaje.style.color = "red";
+                mensaje.classList.remove("d-none");
+                mensaje.classList.remove("alert-success");
+                mensaje.classList.add("alert-danger");
                 mensaje.innerText = "Correo o clave incorrectos";
             }
         } catch (error) {
             console.error("Error login cliente:", error);
-            mensaje.style.color = "red";
+            mensaje.classList.remove("d-none");
+            mensaje.classList.remove("alert-success");
+            mensaje.classList.add("alert-danger");
             mensaje.innerText = "Error al verificar usuario";
         }
     });
