@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ofertas - Huerto Hogar</title>
+    <link rel="stylesheet" href="../css/ofertas.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <!-- Línea Superior -->
+        <div class="header-top">
+            <div class="search-container">
+                <input type="text" id="buscador" placeholder="Buscar productos..." class="search-input">
+                <button id="btnBuscar" class="btn-buscar">Buscar</button>
+            </div>
+            <div class="auth-buttons">
+                <button class="btn-login">Iniciar Sesión</button>
+                <button class="btn-signup">Crear Cuenta</button>
+            </div>
+        </div>
+
+        <!-- Línea Inferior - Nav -->
+        <nav class="nav-main">
+            <div class="nav-center">
+                <a href="/" class="nav-link">Inicio</a>
+                <div class="dropdown">
+                    <a href="#" class="nav-link">Categorías</a>
+                    <div class="dropdown-content" id="dropdownCategorias"></div>
+                </div>
+                <a href="nosotros.html" class="nav-link">Nosotros</a>
+                <a href="ofertas.html" class="nav-link active">Ofertas</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+                <a href="contacto.html" class="nav-link">Contacto</a>
+                <a href="catalogo.html" class="nav-link">Catálogo</a>
+            </div>
+
+            <div class="nav-right">
+                <button class="btn-carrito" onclick="window.location.href='carrito.html'">
+                    <span class="carrito-icon">🛒</span>
+                    Total: $<span class="carrito-total">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+        <!-- HERO SECTION -->
+        <section class="ofertas-hero">
+            <div class="container">
+                <h1>¡Grandes Ofertas en Huerto Hogar!</h1>
+                <p>Descubre descuentos exclusivos en productos para tu huerto y hogar. ¡Aprovecha estas promociones por
+                    tiempo limitado!</p>
+                <a href="#ofertas" class="btn-ofertas">Ver Ofertas</a>
+            </div>
+        </section>
+
+        <!-- FILTROS DE OFERTAS -->
+        <section class="filtros-section">
+            <div class="container">
+                <div class="filtros-ofertas">
+                    <button class="filtro-btn active" data-categoria="todas">Todas las ofertas</button>
+                    <button class="filtro-btn" data-categoria="Frutas">Frutas</button>
+                    <button class="filtro-btn" data-categoria="Semillas">Semillas</button>
+                    <button class="filtro-btn" data-categoria="Verduras">Verduras</button>
+                    <button class="filtro-btn" data-categoria="Organicos">Organicos</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRODUCTOS EN OFERTA -->
+        <section class="ofertas-section" id="ofertas">
+            <div class="container">
+                <h2 class="section-title">Productos en Oferta</h2>
+                <div id="productosOferta" class="productos-grid"></div>
+            </div>
+        </section>
+
+        <!-- BANNER OFERTA ESPECIAL -->
+        <section class="banner-oferta">
+            <div class="container">
+                <h2>¡Oferta Flash! Solo por 48 horas</h2>
+                <p>Consigue un 50% de descuento adicional en productos seleccionados usando el código:
+                    <strong>HUERTO50</strong>
+                </p>
+                <div class="contador-oferta">
+                    <div class="contador-item">
+                        <div class="contador-numero" id="dias">02</div>
+                        <div class="contador-texto">Días</div>
+                    </div>
+                    <div class="contador-item">
+                        <div class="contador-numero" id="horas">12</div>
+                        <div class="contador-texto">Horas</div>
+                    </div>
+                    <div class="contador-item">
+                        <div class="contador-numero" id="minutos">45</div>
+                        <div class="contador-texto">Minutos</div>
+                    </div>
+                    <div class="contador-item">
+                        <div class="contador-numero" id="segundos">30</div>
+                        <div class="contador-texto">Segundos</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Huerto Hogar</h3>
+                    <p><i class="bi bi-geo-alt"></i> Av. Jardín 123, Ciudad Verde</p>
+                    <p><i class="bi bi-telephone"></i> +1 234 567 890</p>
+                    <p><i class="bi bi-envelope"></i> info@huertohogar.com</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Enlaces Rápidos</h3>
+                    <p><a href="index.html">Inicio</a></p>
+                    <p><a href="ofertas.html">Ofertas</a></p>
+                    <p><a href="blog.html">Blog</a></p>
+                    <p><a href="contacto.html">Contacto</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Categorías</h3>
+                    <p>Semillas</p>
+                    <p>Herramientas</p>
+                    <p>Macetas</p>
+                    <p>Fertilizantes</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-pinterest"></i></a>
+                        <a href="#"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Huerto Hogar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/ofertas.js"></script>
+</body>
+
+</html>

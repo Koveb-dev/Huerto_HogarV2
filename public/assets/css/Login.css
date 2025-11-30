@@ -126,23 +126,46 @@ body {
   transform: translateY(-10px);
 }
 
+/* BARRA DE INICIAR SESIÓN CON COLOR ACTUALIZADO */
+/* BARRA DE INICIAR SESIÓN CON COLOR SOLO EN EL TÍTULO */
 .card-header {
   background: #2E8B57;
   /* Verde Esmeralda */
   color: white;
   padding: 30px;
   text-align: center;
+  position: relative;
 }
 
 .card-header h2 {
   font-size: 1.8rem;
   margin-bottom: 10px;
   font-weight: 700;
+  background: linear-gradient(135deg, black 0%, black 100%);
+  /* Gradiente amarillo */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  padding: 5px 0;
 }
 
 .card-header p {
   opacity: 0.9;
   margin-bottom: 0;
+  font-size: 1rem;
+  color: white;
+  /* Mantener el texto secundario en blanco */
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: 200px 0;
+  }
 }
 
 .card-body {
@@ -173,8 +196,7 @@ body {
 }
 
 .btn-login {
-  background-color: #2E8B57;
-  /* Verde Esmeralda */
+  background: linear-gradient(135deg, #2E8B57 0%, #3CB371 100%);
   color: white;
   padding: 14px;
   font-size: 16px;
@@ -183,12 +205,14 @@ body {
   transition: all 0.3s;
   border: none;
   cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(46, 139, 87, 0.2);
 }
 
 .btn-login:hover {
-  background-color: #236b47;
-  /* Verde más oscuro */
+  background: linear-gradient(135deg, #236b47 0%, #2E8B57 100%);
   transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(46, 139, 87, 0.3);
 }
 
 .login-footer a {
@@ -323,6 +347,10 @@ body {
 
   .footer-content {
     grid-template-columns: 1fr;
+  }
+
+  .card-header h2 {
+    font-size: 1.5rem;
   }
 }
 

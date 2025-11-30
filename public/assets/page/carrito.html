@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
+
 <body>
   <!-- HEADER -->
   <header class="header">
@@ -25,19 +27,22 @@
 
     <nav class="nav-main">
       <div class="nav-center">
-        <a href="catalogo.html" class="nav-link">Home</a>
+        <a href="/" class="nav-link">Inicio</a> <!--Cambiar a "/" para React Router-->
         <div class="dropdown">
-          <a href="#" class="nav-link">Categoría ⌄</a>
+          <a href="#" class="nav-link">Categorías</a>
           <div class="dropdown-content" id="dropdownCategorias"></div>
         </div>
-        <a href="#" class="nav-link">Ofertas</a>
-        <a href="#" class="nav-link">Nosotros</a>
-        <a href="#" class="nav-link">Blog</a>
-        <a href="#" class="nav-link">Contacto</a>
+
+        <a href="nosotros.html" class="nav-link">Nosotros</a>
+        <a href="ofertas.html" class="nav-link">Ofertas</a>
+        <a href="blog.html" class="nav-link">Blog</a>
+        <a href="contacto.html" class="nav-link">Contacto</a>
+        <a href="catalogo.html" class="nav-link">Catalogo</a>
       </div>
-      
+
       <div class="nav-right">
         <button class="btn-carrito" onclick="window.location.href='carrito.html'">
+          <!--Cambiar a "carrito" para React Router-->
           <span class="carrito-icon">🛒</span>
           Total: $<span class="carrito-total">0</span>
         </button>
@@ -57,7 +62,7 @@
       <!-- Resumen del Carrito -->
       <section class="resumen-carrito">
         <h2 class="section-title">Resumen del Carrito</h2>
-        
+
         <!-- Tabla de productos en carrito -->
         <div class="tabla-carrito-container">
           <table class="tabla-carrito">
@@ -94,4 +99,5 @@
 
   <script src="../js/carrito.js"></script>
 </body>
+
 </html>
