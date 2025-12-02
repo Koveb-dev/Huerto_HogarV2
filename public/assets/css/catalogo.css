@@ -429,12 +429,13 @@ body {
     .main {
         padding: 20px 15px;
     }
-    
+
 }
+
 /* Estilo para el texto de stock en el catálogo */
 .producto-stock {
-  font-size: 0.9rem;
-  color: #666;
-  margin: 5px 0;
-  font-weight: 500;
+    font-size: 0.9rem;
+    color: #666;
+    margin: 5px 0;
+    font-weight: 500;
 }
