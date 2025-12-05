@@ -13,6 +13,7 @@ import Contacto from "../components/pages/Contacto";
 import Login from "../components/pages/Login";
 import LoginWrapper from "../components/pages/LoginWrapper";
 import Oferta from "../components/pages/Ofertas";
+import PerfilVendedor from "../components/pages/PerfilVendedor"
 
 const RouterConfig = () => (
     <>
@@ -31,6 +32,7 @@ const RouterConfig = () => (
             {/* Rutas de Perfil */}
             <Route path="/perfil-admin" component={PerfilAdmin} />
             <Route path="/perfil-cliente" component={PerfilCliente} />
+            <Route path="/perfil-vendedor" component={PerfilVendedor} />
 
             {/* Rutas del Sistema */}
             <Route path="/catalogo" component={Catalogo} />

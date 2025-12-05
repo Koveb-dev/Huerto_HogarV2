@@ -4,31 +4,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo - Huerto hogar</title>
+  <title>Catálogo - HuertoHogar</title>
   <link rel="stylesheet" href="../css/catalogo.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 
 <body>
-  <!-- HEADER -->
+  <!-- HEADER CON ESTILO HUERTOHOGAR -->
   <header class="header">
-    <!-- Línea Superior -->
+    <!-- Línea Superior con búsqueda y auth -->
     <div class="header-top">
+      <div class="logo-container">
+        <i class="fas fa-leaf"></i>
+        <span>HuertoHogar</span>
+      </div>
+      
       <div class="search-container">
         <input type="text" id="buscador" placeholder="Buscar productos..." class="search-input">
         <button id="btnBuscar" class="btn-buscar">Buscar</button>
       </div>
+      
       <div class="auth-buttons">
-        <button class="btn-login">Iniciar Sesión</button>
-        <button class="btn-signup">Crear Cuenta</button>
+        <button class="btn-login" onclick="window.location.href='/assets/page/login.html'">Iniciar Sesión</button>
+        <button class="btn-signup" onclick="window.location.href='/assets/page/registro.html'">Crear Cuenta</button>
       </div>
     </div>
 
-    <!-- Línea Inferior - Nav -->
+    <!-- Navegación principal -->
     <nav class="nav-main">
       <div class="nav-center">
-        <a href="/" class="nav-link">Inicio</a> <!--Cambiar a "/" para React Router-->
+        <a href="index.html" class="nav-link">Inicio</a>
+        
         <div class="dropdown">
           <a href="#" class="nav-link">Categorías</a>
           <div class="dropdown-content" id="dropdownCategorias"></div>
@@ -37,35 +46,62 @@
         <a href="nosotros.html" class="nav-link">Nosotros</a>
         <a href="blog.html" class="nav-link">Blog</a>
         <a href="contacto.html" class="nav-link">Contacto</a>
-        <a href="catalogo.html" class="nav-link">Catalogo</a>
+        <a href="catalogo.html" class="nav-link">Catálogo</a>
         <a href="ofertas.html" class="nav-link">Ofertas</a>
       </div>
 
       <div class="nav-right">
         <button class="btn-carrito" onclick="window.location.href='carrito.html'">
-          <!--Cambiar a "carrito" para React Router-->
-          <span class="carrito-icon">🛒</span>
+          <span class="carrito-icon"><i class="bi bi-cart3"></i></span>
           Total: $<span class="carrito-total">0</span>
         </button>
       </div>
     </nav>
   </header>
 
-  <!-- MAIN CONTENT -->
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="main">
-    <!-- CARDS DE CATEGORÍAS -->
+    <!-- CATEGORÍAS -->
     <section class="categorias-section">
-      <h2 class="section-title">Categorías</h2>
+      <h2 class="section-title">Nuestras Categorías</h2>
       <button id="btnVerTodos" class="btn-ver-todos">Todos los productos</button>
       <div id="cardsCategorias" class="categorias-grid"></div>
     </section>
 
     <!-- PRODUCTOS -->
     <section class="productos-section">
-      <h2 id="tituloProductos" class="section-title">Todos los Productos</h2>
+      <h2 id="tituloProductos" class="section-title">Productos Disponibles</h2>
       <div id="productosGrid" class="productos-grid"></div>
     </section>
   </main>
+
+  <!-- FOOTER ESTILO HUERTOHOGAR -->
+  <footer class="footer" style="background: #2E8B57; color: white; padding: 50px 0 20px; margin-top: 60px;">
+    <div class="container">
+      <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-bottom: 30px;">
+        <div class="footer-section">
+          <h3 style="margin-bottom: 20px; font-size: 1.2rem;">HuertoHogar</h3>
+          <p>Conectando el campo con tu hogar desde 2017</p>
+        </div>
+        <div class="footer-section">
+          <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Contacto</h3>
+          <p><i class="fas fa-phone" style="margin-right: 10px;"></i> +56 9 1234 5678</p>
+          <p><i class="fas fa-envelope" style="margin-right: 10px;"></i> info@huertohogar.cl</p>
+        </div>
+        <div class="footer-section">
+          <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Síguenos</h3>
+          <div class="social-icons" style="display: flex; gap: 15px;">
+            <a href="#" style="color: white; font-size: 1.5rem; transition: color 0.3s;"><i class="fab fa-facebook"></i></a>
+            <a href="#" style="color: white; font-size: 1.5rem; transition: color 0.3s;"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="color: white; font-size: 1.5rem; transition: color 0.3s;"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom" style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        <p>&copy; 2025 HuertoHogar. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
 
   <script src="../js/catalogo.js"></script>
 </body>

@@ -142,16 +142,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Obtener un icono representativo para cada categoría (CATEGORÍAS ORIGINALES MANTENIDAS)
-  function obtenerIconoCategoria(categoria) {
+ function obtenerIconoCategoria(categoria) {
     const iconos = {
-      'Frutas': '🍎',
-      'Verduras': '🥬',
-      'Semillas': '🌱',
-      'Lacteos': '🥛',
-      'Productos Organicos': '🍯'
+        'Frutas': '🍎',
+        'Verduras': '🥬',
+        'Semillas': '🌱',
+        'Lacteos': '🥛',
+        'Productos Organicos': '🍯'
+        // Puedes agregar más categorías si es necesario
     };
     return iconos[categoria] || '📦';
-  }
+}
 
   // Filtrar productos por categoría
   function filtrarPorCategoria(categoria) {
