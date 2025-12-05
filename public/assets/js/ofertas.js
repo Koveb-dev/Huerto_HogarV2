@@ -1,95 +1,102 @@
-// Configuración de Firebase
-const firebaseConfig = {
-    // Tu configuración de Firebase aquí
-    apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
-    authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
-    projectId: "tiendahuertohogar-2ce3a",
-    storageBucket: "tiendahuertohogar-2ce3a.appspot.com",
-    messagingSenderId: "857983411223",
-    appId: "1:857983411223:web:a1c200cd07b7fd63b36852"
-};
+// ofertas.js
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+// 1. Importar las funciones necesarias de tu fireStoreService.js
+// Asegúrate de que la ruta sea correcta desde este archivo (ej. ../services/fireStoreService.js)
+import { obtenerOfertas } from "./fireStoreService.js"; // Ajusta la ruta si es necesario
 
-// Variables globales
-let productosOferta = [];
+// Variables globales (mantenerlas fuera del ámbito de las funciones si las necesitas accesibles globalmente)
+let listaOfertas = []; // Renombramos para almacenar los objetos de oferta completos
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
 // Inicializar la página
 document.addEventListener('DOMContentLoaded', function () {
-    inicializarFirebase();
-    cargarProductosOferta();
+    // Ya no necesitas inicializar Firebase aquí, tu fireStoreService ya lo hace.
+    cargarTodasLasOfertas(); // Cambiamos el nombre de la función para mayor claridad
     inicializarFiltros();
     inicializarContador();
     actualizarCarrito();
 });
 
-// Inicializar Firebase
-function inicializarFirebase() {
-    // Verificar si Firebase está inicializado correctamente
-    console.log('Firebase inicializado');
-}
 
-// Cargar productos en oferta desde Firebase
-function cargarProductosOferta() {
+// Cargar todas las ofertas desde Firebase (ahora usando el servicio)
+async function cargarTodasLasOfertas() {
     const productosGrid = document.getElementById('productosOferta');
+    if (!productosGrid) { // Para evitar errores si el elemento no existe
+        console.error("No se encontró el elemento #productosOferta.");
+        return;
+    }
 
     // Mostrar estado de carga
-    productosGrid.innerHTML = '<div class="cargando">Cargando productos...</div>';
+    productosGrid.innerHTML = '<div class="cargando">Cargando ofertas...</div>';
 
-    db.collection('productos')
-        .where('enOferta', '==', true)
-        .get()
-        .then((querySnapshot) => {
-            productosOferta = [];
-            productosGrid.innerHTML = '';
+    try {
+        const resultado = await obtenerOfertas(); // Llama a la función del servicio
 
-            if (querySnapshot.empty) {
-                productosGrid.innerHTML = '<div class="sin-productos">No hay productos en oferta en este momento</div>';
+        if (resultado.exito) {
+            listaOfertas = resultado.datos; // El servicio ya te devuelve las ofertas con sus productos
+            productosGrid.innerHTML = ''; // Limpiar el mensaje de carga
+
+            if (listaOfertas.length === 0) {
+                productosGrid.innerHTML = '<div class="sin-productos">No hay ofertas disponibles en este momento</div>';
                 return;
             }
 
-            querySnapshot.forEach((doc) => {
-                const producto = {
-                    id: doc.id,
-                    ...doc.data()
-                };
-                productosOferta.push(producto);
-                renderizarProducto(producto, productosGrid);
+            listaOfertas.forEach((oferta) => {
+                // Verificar que la oferta tenga un producto asociado
+                if (oferta.producto) {
+                    renderizarOferta(oferta, productosGrid); // Renderizamos la oferta completa
+                } else {
+                    console.warn(`Oferta ID: ${oferta.id} no tiene un producto asociado válido.`);
+                }
             });
-        })
-        .catch((error) => {
-            console.error('Error al cargar productos:', error);
-            productosGrid.innerHTML = '<div class="error-carga">Error al cargar los productos. Intenta nuevamente.</div>';
-        });
+        } else {
+            console.error('Error al cargar ofertas:', resultado.error);
+            productosGrid.innerHTML = `<div class="error-carga">Error al cargar las ofertas: ${resultado.error}. Intenta nuevamente.</div>`;
+        }
+    } catch (error) {
+        console.error('Error inesperado al cargar ofertas:', error);
+        productosGrid.innerHTML = '<div class="error-carga">Error inesperado al cargar los productos. Intenta nuevamente.</div>';
+    }
 }
 
-// Renderizar un producto en el grid
-function renderizarProducto(producto, contenedor) {
-    const porcentajeDescuento = Math.round((1 - producto.precioOferta / producto.precio) * 100);
+// Renderizar una oferta en el grid
+function renderizarOferta(oferta, contenedor) {
+    const producto = oferta.producto; // Obtenemos el producto de la oferta
 
-    const productoHTML = `
-    <div class="card-oferta" data-categoria="${producto.categoria}">
-      <div class="etiqueta-oferta">-${porcentajeDescuento}%</div>
-      <div class="card-img">
-        <img src="${producto.imagen}" alt="${producto.nombre}">
-      </div>
-      <div class="card-body">
-        <div class="card-categoria">${producto.categoria}</div>
-        <h3 class="card-title">${producto.nombre}</h3>
-        <div class="card-precios">
-          <span class="precio-actual">$${producto.precioOferta}</span>
-          <span class="precio-anterior">$${producto.precio}</span>
+    // Calcular el precio de oferta y el porcentaje de descuento
+    const precioOriginal = producto.precio;
+    let precioOfertaCalculado = precioOriginal;
+
+    if (oferta.tipoDescuento === 'porcentaje' && typeof oferta.valorDescuento === 'number') {
+        precioOfertaCalculado = precioOriginal * (1 - oferta.valorDescuento);
+    } else if (oferta.tipoDescuento === 'montoFijo' && typeof oferta.valorDescuento === 'number') {
+        precioOfertaCalculado = precioOriginal - oferta.valorDescuento;
+    }
+    precioOfertaCalculado = Math.max(0, precioOfertaCalculado); // Asegurarse que no sea negativo
+
+    const porcentajeDescuento = precioOriginal > 0
+        ? Math.round((1 - precioOfertaCalculado / precioOriginal) * 100)
+        : 0;
+
+    const ofertaHTML = `
+        <div class="card-oferta" data-categoria="${producto.categoria}" data-oferta-id="${oferta.id}">
+            ${porcentajeDescuento > 0 ? `<div class="etiqueta-oferta">-${porcentajeDescuento}%</div>` : ''}
+            <div class="card-img">
+                <img src="${producto.imagen}" alt="${producto.nombre}">
+            </div>
+            <div class="card-body">
+                <div class="card-categoria">${producto.categoria}</div>
+                <h3 class="card-title">${oferta.nombre || oferta.nombreOferta || producto.nombre}</h3>
+                <div class="card-precios">
+                    <span class="precio-actual">$${precioOfertaCalculado.toFixed(2)}</span>
+                    ${precioOriginal > precioOfertaCalculado ? `<span class="precio-anterior">$${precioOriginal.toFixed(2)}</span>` : ''}
+                </div>
+                <p class="card-descripcion">${oferta.descripcion || producto.descripcion}</p>
+                <button class="btn-comprar" data-oferta-id="${oferta.id}" data-producto-id="${producto.id}">Añadir al Carrito</button>
+            </div>
         </div>
-        <p class="card-descripcion">${producto.descripcion}</p>
-        <button class="btn-comprar" data-id="${producto.id}">Añadir al Carrito</button>
-      </div>
-    </div>
-  `;
-
-    contenedor.insertAdjacentHTML('beforeend', productoHTML);
+    `;
+    contenedor.insertAdjacentHTML('beforeend', ofertaHTML);
 }
 
 // Inicializar filtros de categorías
@@ -103,78 +110,109 @@ function inicializarFiltros() {
             // Agregar clase active al botón clickeado
             this.classList.add('active');
 
-            // Filtrar productos por categoría
+            // Filtrar ofertas por categoría
             const categoria = this.getAttribute('data-categoria');
-            filtrarProductos(categoria);
+            filtrarOfertasPorCategoria(categoria); // Cambiamos el nombre de la función
         });
     });
 }
 
-// Filtrar productos por categoría
-function filtrarProductos(categoria) {
+// Filtrar ofertas por categoría
+function filtrarOfertasPorCategoria(categoriaSeleccionada) { // Cambiamos el nombre y parámetro
     const productosGrid = document.getElementById('productosOferta');
-    const productos = document.querySelectorAll('.card-oferta');
+    if (!productosGrid) return; // Asegurarse de que el contenedor existe
 
-    productos.forEach(producto => {
-        if (categoria === 'todas' || producto.getAttribute('data-categoria') === categoria) {
-            producto.style.display = 'block';
-        } else {
-            producto.style.display = 'none';
-        }
+    // Limpiar el grid para volver a renderizar los filtrados
+    productosGrid.innerHTML = '';
+
+    // Filtrar la lista de ofertas cargadas
+    const ofertasFiltradas = listaOfertas.filter(oferta => {
+        // Asegurarse de que el producto exista para poder filtrar por categoría
+        return oferta.producto && (categoriaSeleccionada === 'todas' || oferta.producto.categoria === categoriaSeleccionada);
     });
+
+    if (ofertasFiltradas.length === 0) {
+        productosGrid.innerHTML = '<div class="sin-productos">No hay ofertas para esta categoría.</div>';
+    } else {
+        ofertasFiltradas.forEach(oferta => renderizarOferta(oferta, productosGrid));
+    }
 }
 
-// Inicializar contador regresivo para oferta flash
+// Inicializar contador regresivo para oferta flash (mantener como está, ya que no depende de Firebase)
 function inicializarContador() {
     function actualizarContador() {
         const ahora = new Date();
         const finOferta = new Date(ahora);
-        finOferta.setDate(ahora.getDate() + 2); // 2 días desde ahora
+        finOferta.setDate(ahora.getDate() + 2); // Ejemplo: 2 días desde ahora
 
         const diferencia = finOferta - ahora;
+
+        if (diferencia <= 0) {
+            document.getElementById('dias').textContent = '00';
+            document.getElementById('horas').textContent = '00';
+            document.getElementById('minutos').textContent = '00';
+            document.getElementById('segundos').textContent = '00';
+            clearInterval(intervalo); // Detener el contador
+            return;
+        }
 
         const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
         const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
         const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
 
-        document.getElementById('dias').textContent = dias.toString().padStart(2, '0');
-        document.getElementById('horas').textContent = horas.toString().padStart(2, '0');
-        document.getElementById('minutos').textContent = minutos.toString().padStart(2, '0');
-        document.getElementById('segundos').textContent = segundos.toString().padStart(2, '0');
+        document.getElementById('dias').textContent = String(dias).padStart(2, '0');
+        document.getElementById('horas').textContent = String(horas).padStart(2, '0');
+        document.getElementById('minutos').textContent = String(minutos).padStart(2, '0');
+        document.getElementById('segundos').textContent = String(segundos).padStart(2, '0');
     }
 
-    // Actualizar el contador cada segundo
-    setInterval(actualizarContador, 1000);
+    const intervalo = setInterval(actualizarContador, 1000);
     actualizarContador(); // Llamada inicial
 }
 
 // Manejar eventos de añadir al carrito
 document.addEventListener('click', function (e) {
     if (e.target.classList.contains('btn-comprar')) {
-        const productoId = e.target.getAttribute('data-id');
-        agregarAlCarrito(productoId);
+        const ofertaId = e.target.getAttribute('data-oferta-id'); // Ahora obtenemos el ID de la oferta
+        agregarAlCarrito(ofertaId);
     }
 });
 
-// Agregar producto al carrito
-function agregarAlCarrito(productoId) {
-    const producto = productosOferta.find(p => p.id === productoId);
+// Agregar producto al carrito (ahora recibe el ID de la oferta)
+function agregarAlCarrito(ofertaId) {
+    const oferta = listaOfertas.find(o => o.id === ofertaId);
 
-    if (!producto) return;
+    if (!oferta || !oferta.producto) {
+        mostrarMensaje('Error: Oferta o producto no encontrado.');
+        return;
+    }
 
-    // Verificar si el producto ya está en el carrito
-    const productoEnCarrito = carrito.find(item => item.id === productoId);
+    const producto = oferta.producto;
+
+    // Calcular el precio de oferta real para el carrito
+    let precioOfertaCalculado = producto.precio;
+    if (oferta.tipoDescuento === 'porcentaje' && typeof oferta.valorDescuento === 'number') {
+        precioOfertaCalculado = producto.precio * (1 - oferta.valorDescuento);
+    } else if (oferta.tipoDescuento === 'montoFijo' && typeof oferta.valorDescuento === 'number') {
+        precioOfertaCalculado = producto.precio - oferta.valorDescuento;
+    }
+    precioOfertaCalculado = Math.max(0, precioOfertaCalculado);
+
+    // Verificar si el producto ya está en el carrito (lo identificamos por el ID del producto, no de la oferta)
+    const productoEnCarrito = carrito.find(item => item.id === producto.id);
 
     if (productoEnCarrito) {
         productoEnCarrito.cantidad += 1;
     } else {
         carrito.push({
-            id: producto.id,
+            id: producto.id, // Guardamos el ID del producto
             nombre: producto.nombre,
-            precio: producto.precioOferta,
+            precio: precioOfertaCalculado, // El precio ya con el descuento de la oferta
             imagen: producto.imagen,
-            cantidad: 1
+            cantidad: 1,
+            esOferta: true, // Flag para indicar que viene de una oferta
+            idOferta: oferta.id // Para referencia a la oferta específica
         });
     }
 
@@ -185,17 +223,19 @@ function agregarAlCarrito(productoId) {
     actualizarCarrito();
 
     // Mostrar mensaje de confirmación
-    mostrarMensaje(`${producto.nombre} añadido al carrito`);
+    mostrarMensaje(`${producto.nombre} en oferta añadido al carrito`);
 }
 
-// Actualizar visualización del carrito
+// Actualizar visualización del carrito (sin cambios, ya que maneja la variable global 'carrito')
 function actualizarCarrito() {
     const carritoTotal = document.querySelector('.carrito-total');
-    const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-    carritoTotal.textContent = total.toFixed(2);
+    if (carritoTotal) {
+        const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+        carritoTotal.textContent = total.toFixed(2);
+    }
 }
 
-// Mostrar mensaje temporal
+// Mostrar mensaje temporal (sin cambios)
 function mostrarMensaje(mensaje) {
     const mensajeDiv = document.createElement('div');
     mensajeDiv.className = 'mensaje-flotante';

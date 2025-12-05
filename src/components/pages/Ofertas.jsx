@@ -1,48 +1,66 @@
 import { useState, useEffect } from "react";
-import { db } from "../../services/firebase";
-import { collection, getDocs, query, where } from 'firebase/firestore';
+// Importar las funciones específicas de tu servicio de Firestore, no db directamente
+import { obtenerOfertas } from "../../services/fireStoreService"; // Asegúrate que la ruta sea correcta
 
 const Ofertas = () => {
-    const [productos, setProductos] = useState([]);
+    // Cambiamos 'productos' a 'ofertas' para reflejar que estamos cargando documentos de la colección 'ofertas'
+    // Cada elemento en este array será un objeto de oferta que ya incluye su producto anidado.
+    const [ofertas, setOfertas] = useState([]);
+    const [cargando, setCargando] = useState(true); // Nuevo estado para controlar la carga
+    const [error, setError] = useState(null); // Nuevo estado para manejar errores
     const [categoriaFiltro, setCategoriaFiltro] = useState('todas');
-    const [carrito, setCarrito] = useState([]);
+    const [carrito, setCarrito] = useState([]); // Mantenemos el carrito
+
     const [contador, setContador] = useState({
-        dias: '02',
-        horas: '12',
-        minutos: '45',
-        segundos: '30'
+        dias: '00', // Inicializamos en 0
+        horas: '00',
+        minutos: '00',
+        segundos: '00'
     });
 
-    // Cargar productos en oferta
+    // Cargar ofertas (desde la colección 'ofertas' de Firestore)
     useEffect(() => {
-        const cargarProductos = async () => {
+        const cargarTodasLasOfertas = async () => {
             try {
-                const q = query(
-                    collection(db, 'productos'),
-                    where('enOferta', '==', true)
-                );
-                const querySnapshot = await getDocs(q);
-                const productosData = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                setProductos(productosData);
-            } catch (error) {
-                console.error('Error al cargar productos:', error);
+                // Usamos la función obtenerOfertas de tu fireStoreService.js
+                const resultado = await obtenerOfertas(); // Esta función ya resuelve el producto
+                if (resultado.exito) {
+                    setOfertas(resultado.datos);
+                } else {
+                    setError(resultado.error);
+                }
+            } catch (err) {
+                setError("Error desconocido al cargar las ofertas.");
+                console.error('Error al cargar ofertas:', err);
+            } finally {
+                setCargando(false);
             }
         };
 
-        cargarProductos();
+        cargarTodasLasOfertas();
     }, []);
 
-    // Inicializar contador regresivo
+    // Inicializar contador regresivo (este sigue siendo estático, no vinculado a una oferta específica)
     useEffect(() => {
+        // Se puede hacer más dinámico si las ofertas tienen fechaFin
+        const calcularFechaFinGeneral = () => {
+            const ahora = new Date();
+            const finOfertaGeneral = new Date(ahora);
+            finOfertaGeneral.setDate(ahora.getDate() + 2); // Ejemplo: 2 días desde ahora
+            return finOfertaGeneral;
+        };
+
+        const fechaLimite = calcularFechaFinGeneral(); // La fecha límite para este contador genérico
+
         const actualizarContador = () => {
             const ahora = new Date();
-            const finOferta = new Date(ahora);
-            finOferta.setDate(ahora.getDate() + 2);
+            const diferencia = fechaLimite - ahora;
 
-            const diferencia = finOferta - ahora;
+            if (diferencia <= 0) {
+                setContador({ dias: '00', horas: '00', minutos: '00', segundos: '00' });
+                clearInterval(intervalo);
+                return;
+            }
 
             const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
             const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -50,47 +68,72 @@ const Ofertas = () => {
             const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
 
             setContador({
-                dias: dias.toString().padStart(2, '0'),
-                horas: horas.toString().padStart(2, '0'),
-                minutos: minutos.toString().padStart(2, '0'),
-                segundos: segundos.toString().padStart(2, '0')
+                dias: String(dias).padStart(2, '0'),
+                horas: String(horas).padStart(2, '0'),
+                minutos: String(minutos).padStart(2, '0'),
+                segundos: String(segundos).padStart(2, '0')
             });
         };
 
         const intervalo = setInterval(actualizarContador, 1000);
-        actualizarContador();
+        actualizarContador(); // Ejecutar una vez inmediatamente
 
-        return () => clearInterval(intervalo);
-    }, []);
+        return () => clearInterval(intervalo); // Limpiar el intervalo al desmontar
+    }, []); // Dependencias vacías, se ejecuta una vez
 
-    // Filtrar productos por categoría
-    const productosFiltrados = categoriaFiltro === 'todas'
-        ? productos
-        : productos.filter(producto => producto.categoria === categoriaFiltro);
+    // Filtrar ofertas por categoría del producto asociado
+    const ofertasFiltradas = categoriaFiltro === 'todas'
+        ? ofertas
+        : ofertas.filter(oferta => oferta.producto && oferta.producto.categoria === categoriaFiltro);
 
-    // Agregar producto al carrito
-    const agregarAlCarrito = (producto) => {
-        const productoExistente = carrito.find(item => item.id === producto.id);
+    // Agregar producto con oferta al carrito
+    const agregarAlCarrito = (oferta) => {
+        // Asegúrate de que el producto esté presente en la oferta
+        if (!oferta.producto) {
+            alert('No se pudo añadir al carrito: producto asociado no encontrado.');
+            return;
+        }
 
-        if (productoExistente) {
+        // Calcula el precio de oferta real
+        let precioOfertaCalculado = oferta.producto.precio; // Precio base del producto
+        if (oferta.tipoDescuento === 'porcentaje' && typeof oferta.valorDescuento === 'number') {
+            precioOfertaCalculado = oferta.producto.precio * (1 - oferta.valorDescuento);
+        } else if (oferta.tipoDescuento === 'montoFijo' && typeof oferta.valorDescuento === 'number') {
+            precioOfertaCalculado = oferta.producto.precio - oferta.valorDescuento;
+        }
+        // Asegúrate de que el precio no sea negativo
+        precioOfertaCalculado = Math.max(0, precioOfertaCalculado);
+
+        const productoExistenteEnCarrito = carrito.find(item => item.id === oferta.producto.id);
+
+        if (productoExistenteEnCarrito) {
             setCarrito(carrito.map(item =>
-                item.id === producto.id
+                item.id === oferta.producto.id
                     ? { ...item, cantidad: item.cantidad + 1 }
                     : item
             ));
         } else {
             setCarrito([...carrito, {
-                id: producto.id,
-                nombre: producto.nombre,
-                precio: producto.precioOferta,
-                imagen: producto.imagen,
-                cantidad: 1
+                id: oferta.producto.id,
+                nombre: oferta.producto.nombre,
+                precio: precioOfertaCalculado, // El precio ya con el descuento de la oferta
+                imagen: oferta.producto.imagen,
+                cantidad: 1,
+                esOferta: true, // Puedes añadir un flag si lo necesitas
+                idOferta: oferta.id // Referencia a la oferta
             }]);
         }
 
-        // Mostrar mensaje de confirmación
-        alert(`${producto.nombre} añadido al carrito`);
+        alert(`${oferta.producto.nombre} en oferta añadido al carrito`);
     };
+
+    if (cargando) {
+        return <div className="ofertas-page">Cargando ofertas...</div>;
+    }
+
+    if (error) {
+        return <div className="ofertas-page">Error al cargar las ofertas: {error}</div>;
+    }
 
     return (
         <div className="ofertas-page">
@@ -125,33 +168,60 @@ const Ofertas = () => {
                 <div className="container">
                     <h2 className="section-title">Productos en Oferta</h2>
                     <div className="productos-grid">
-                        {productosFiltrados.map(producto => {
-                            const porcentajeDescuento = Math.round((1 - producto.precioOferta / producto.precio) * 100);
+                        {ofertasFiltradas.length === 0 ? (
+                            <p>No hay ofertas disponibles para esta categoría en este momento.</p>
+                        ) : (
+                            ofertasFiltradas.map(oferta => {
+                                // Asegurarse de que el producto asociado exista antes de renderizar
+                                if (!oferta.producto) {
+                                    return <div key={oferta.id} className="card-oferta error-card">
+                                        <p>Oferta sin producto asociado válido (ID: {oferta.id})</p>
+                                    </div>;
+                                }
 
-                            return (
-                                <div key={producto.id} className="card-oferta">
-                                    <div className="etiqueta-oferta">-{porcentajeDescuento}%</div>
-                                    <div className="card-img">
-                                        <img src={producto.imagen} alt={producto.nombre} />
-                                    </div>
-                                    <div className="card-body">
-                                        <div className="card-categoria">{producto.categoria}</div>
-                                        <h3 className="card-title">{producto.nombre}</h3>
-                                        <div className="card-precios">
-                                            <span className="precio-actual">${producto.precioOferta}</span>
-                                            <span className="precio-anterior">${producto.precio}</span>
+                                // Calcula el precio de oferta y el porcentaje de descuento
+                                const precioOriginal = oferta.producto.precio;
+                                let precioOferta = precioOriginal;
+
+                                if (oferta.tipoDescuento === 'porcentaje' && typeof oferta.valorDescuento === 'number') {
+                                    precioOferta = precioOriginal * (1 - oferta.valorDescuento);
+                                } else if (oferta.tipoDescuento === 'montoFijo' && typeof oferta.valorDescuento === 'number') {
+                                    precioOferta = precioOriginal - oferta.valorDescuento;
+                                }
+                                precioOferta = Math.max(0, precioOferta); // Asegurar que no sea negativo
+
+                                const porcentajeDescuento = precioOriginal > 0
+                                    ? Math.round((1 - precioOferta / precioOriginal) * 100)
+                                    : 0;
+
+                                return (
+                                    <div key={oferta.id} className="card-oferta">
+                                        <div className="etiqueta-oferta">-{porcentajeDescuento}%</div>
+                                        <div className="card-img">
+                                            <img src={oferta.producto.imagen} alt={oferta.producto.nombre} />
                                         </div>
-                                        <p className="card-descripcion">{producto.descripcion}</p>
-                                        <button
-                                            className="btn-comprar"
-                                            onClick={() => agregarAlCarrito(producto)}
-                                        >
-                                            Añadir al Carrito
-                                        </button>
+                                        <div className="card-body">
+                                            {/* Usamos el nombre de la oferta, no el del producto si es un campo distinto */}
+                                            <div className="card-categoria">{oferta.producto.categoria}</div>
+                                            <h3 className="card-title">{oferta.nombreOferta || oferta.producto.nombre}</h3>
+                                            <div className="card-precios">
+                                                <span className="precio-actual">${precioOferta.toFixed(2)}</span>
+                                                {precioOriginal > precioOferta && ( // Solo muestra precio anterior si hay descuento
+                                                    <span className="precio-anterior">${precioOriginal.toFixed(2)}</span>
+                                                )}
+                                            </div>
+                                            <p className="card-descripcion">{oferta.descripcion || oferta.producto.descripcion}</p>
+                                            <button
+                                                className="btn-comprar"
+                                                onClick={() => agregarAlCarrito(oferta)}
+                                            >
+                                                Añadir al Carrito
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })
+                        )}
                     </div>
                 </div>
             </section>
