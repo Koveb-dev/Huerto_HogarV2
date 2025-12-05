@@ -1,12 +1,12 @@
 // Configuración de Firebase
 const firebaseConfig = {
     // Tu configuración de Firebase aquí
-    apiKey: "tu-api-key",
-    authDomain: "tu-auth-domain",
-    projectId: "huerto-hogar",
-    storageBucket: "tu-storage-bucket",
-    messagingSenderId: "tu-sender-id",
-    appId: "tu-app-id"
+    apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
+    authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
+    projectId: "tiendahuertohogar-2ce3a",
+    storageBucket: "tiendahuertohogar-2ce3a.appspot.com",
+    messagingSenderId: "857983411223",
+    appId: "1:857983411223:web:a1c200cd07b7fd63b36852"
 };
 
 // Inicializar Firebase

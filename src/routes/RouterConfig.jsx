@@ -12,6 +12,7 @@ import Nosotros from "../components/pages/Nosotros";
 import Contacto from "../components/pages/Contacto";
 import Login from "../components/pages/Login";
 import LoginWrapper from "../components/pages/LoginWrapper";
+import Oferta from "../components/pages/Ofertas";
 
 const RouterConfig = () => (
     <>
@@ -39,6 +40,7 @@ const RouterConfig = () => (
             <Route path="/error" component={ErrorPago} />
             <Route path="/nosotros" component={Nosotros} />
             <Route path="/contacto" component={Contacto} />
+            <Route path="/ofertas" component={Oferta} />
         </Switch>
     </>
 );
