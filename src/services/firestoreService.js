@@ -18,7 +18,10 @@ import {
   onAuthStateChanged
 } from "firebase/auth";
 
+// Referencias a colecciones - AÑADIDAS AQUÍ
 const coleccionOfertasRef = collection(db, 'ofertas');
+const coleccionProductosRef = collection(db, 'products'); // ← ESTA ES LA QUE FALTABA
+
 // Función existente - mantener
 export async function addUser(user) {
   try {
@@ -149,7 +152,7 @@ export const addContactMessage = async (contactData) => {
   }
 };
 
-// Obtener Ofertas
+// Obtener Ofertas (función original que usa la colección 'products')
 export const getOfertas = async () => {
   try {
     const q = query(collection(db, "products"), where("onSale", "==", true));
@@ -164,11 +167,11 @@ export const getOfertas = async () => {
   }
 };
 
-
+// Nueva función para crear ofertas
 export const crearOferta = async (datosOferta, idProducto) => {
   try {
     // 1. Verificar si el producto existe
-    const docProductoRef = doc(coleccionProductosRef, idProducto); // Usando coleccionProductosRef
+    const docProductoRef = doc(coleccionProductosRef, idProducto);
     const snapshotProducto = await getDoc(docProductoRef);
 
     if (!snapshotProducto.exists()) {
@@ -178,11 +181,13 @@ export const crearOferta = async (datosOferta, idProducto) => {
     // 2. Crear el objeto de la oferta con la referencia al producto
     const nuevaOferta = {
       ...datosOferta,
-      referenciaProducto: docProductoRef // Guarda la referencia al documento del producto
+      referenciaProducto: docProductoRef, // Guarda la referencia al documento del producto
+      createdAt: new Date(),
+      activo: true
     };
 
     // 3. Añadir la oferta a la colección 'ofertas'
-    const referenciaDoc = await addDoc(coleccionOfertasRef, nuevaOferta); // Usando coleccionOfertasRef
+    const referenciaDoc = await addDoc(coleccionOfertasRef, nuevaOferta);
     console.log("Oferta creada con ID: ", referenciaDoc.id);
     return { exito: true, id: referenciaDoc.id };
   } catch (error) {
@@ -198,7 +203,7 @@ export const crearOferta = async (datosOferta, idProducto) => {
  */
 export const obtenerOfertaConDetallesProducto = async (idOferta) => {
   try {
-    const docOfertaRef = doc(coleccionOfertasRef, idOferta); // Usando coleccionOfertasRef
+    const docOfertaRef = doc(coleccionOfertasRef, idOferta);
     const snapshotOferta = await getDoc(docOfertaRef);
 
     if (!snapshotOferta.exists()) {
@@ -209,16 +214,16 @@ export const obtenerOfertaConDetallesProducto = async (idOferta) => {
     const ofertaCompleta = { id: snapshotOferta.id, ...datosOferta };
 
     // 2. Resolver la referencia al producto
-    if (datosOferta.referenciaProducto && datosOferta.referenciaProducto.path) { // Asegurarse que es una referencia válida
+    if (datosOferta.referenciaProducto && datosOferta.referenciaProducto.path) {
       const snapshotProducto = await getDoc(datosOferta.referenciaProducto);
       if (snapshotProducto.exists()) {
         ofertaCompleta.producto = { id: snapshotProducto.id, ...snapshotProducto.data() };
       } else {
-        ofertaCompleta.producto = null; // Producto asociado no encontrado
+        ofertaCompleta.producto = null;
         console.warn(`Producto con referencia ${datosOferta.referenciaProducto.path} no encontrado para la oferta ${idOferta}`);
       }
     } else {
-      ofertaCompleta.producto = null; // No hay referencia de producto válida
+      ofertaCompleta.producto = null;
     }
 
     return { exito: true, datos: ofertaCompleta };
@@ -232,10 +237,10 @@ export const obtenerOfertaConDetallesProducto = async (idOferta) => {
  * Obtiene todas las ofertas activas de la colección 'ofertas', incluyendo los detalles de sus productos asociados.
  * @returns {Object} { exito: boolean, datos?: Array<Object>, error?: string }
  */
-export const obtenerOfertas = async () => { // Función que reemplaza tu 'getOfertas' anterior
+export const obtenerOfertas = async () => {
   try {
-    // Consulta las ofertas activas. Si no tienes el campo 'activo', puedes omitir el where.
-    const consulta = query(coleccionOfertasRef, where("activo", "==", true)); // Usando coleccionOfertasRef
+    // Consulta las ofertas activas
+    const consulta = query(coleccionOfertasRef, where("activo", "==", true));
     const snapshotConsulta = await getDocs(consulta);
     const listaOfertas = [];
 
@@ -249,11 +254,11 @@ export const obtenerOfertas = async () => { // Función que reemplaza tu 'getOfe
         if (snapshotProducto.exists()) {
           ofertaCompleta.producto = { id: snapshotProducto.id, ...snapshotProducto.data() };
         } else {
-          ofertaCompleta.producto = null; // Producto asociado no encontrado
+          ofertaCompleta.producto = null;
           console.warn(`Producto con referencia ${datosOferta.referenciaProducto.path} no encontrado para la oferta ${snapshotDoc.id}`);
         }
       } else {
-        ofertaCompleta.producto = null; // No hay referencia de producto válida
+        ofertaCompleta.producto = null;
       }
       listaOfertas.push(ofertaCompleta);
     }
@@ -261,5 +266,19 @@ export const obtenerOfertas = async () => { // Función que reemplaza tu 'getOfe
   } catch (error) {
     console.error("Error al obtener ofertas: ", error);
     return { exito: false, error: error.message };
+  }
+};
+
+// Función para obtener todos los productos (puede ser útil para crear ofertas)
+export const obtenerProductos = async () => {
+  try {
+    const snapshot = await getDocs(coleccionProductosRef);
+    const productos = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    return { success: true, data: productos };
+  } catch (error) {
+    return { success: false, error: error.message };
   }
 };
