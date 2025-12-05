@@ -47,6 +47,7 @@ body {
     border-radius: 8px 0 0 8px;
     font-size: 16px;
     width: 300px;
+    height: 42px; /* Altura fija para alineación */
 }
 
 .btn-buscar {
@@ -58,6 +59,10 @@ body {
     cursor: pointer;
     font-weight: 600;
     transition: background-color 0.3s;
+    height: 42px; /* Misma altura que el input */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-buscar:hover {
@@ -102,11 +107,16 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
 }
 
 .nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     gap: 20px;
+    align-items: center; /* Asegura alineación vertical */
 }
 
 .nav-link {
@@ -116,6 +126,9 @@ body {
     transition: color 0.3s;
     padding: 8px 0;
     position: relative;
+    display: flex;
+    align-items: center; /* Alineación vertical consistente */
+    height: 100%; /* Ocupa toda la altura disponible */
 }
 
 .nav-link:hover,
@@ -135,6 +148,8 @@ body {
 
 .dropdown {
     position: relative;
+    display: flex;
+    align-items: center; /* Alinea verticalmente el dropdown */
 }
 
 .dropdown-content {
@@ -169,6 +184,8 @@ body {
 .nav-right {
     display: flex;
     align-items: center;
+    margin-left: auto; /* Empuja el carrito a la derecha */
+    padding-left: 20px; /* Espacio extra a la izquierda del carrito */
 }
 
 .btn-carrito {
@@ -183,6 +200,7 @@ body {
     align-items: center;
     gap: 8px;
     transition: background-color 0.3s;
+    white-space: nowrap; /* Evita que el texto se divida */
 }
 
 .btn-carrito:hover {
@@ -509,8 +527,16 @@ body {
     }
 
     .nav-center {
+        position: static;
+        transform: none;
         flex-wrap: wrap;
         justify-content: center;
+        gap: 10px;
+    }
+
+    .nav-right {
+        margin-left: 0;
+        padding-left: 0;
     }
 
     .ofertas-hero {
