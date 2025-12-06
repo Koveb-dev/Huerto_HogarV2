@@ -4,61 +4,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Huerto Hogar</title>
-    <link rel="stylesheet" href="http://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>Registro | Huerto Hogar</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="../css/registro.css">
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 
 <body>
-    <header>
-        <h4>Logo</h4>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="assets/page/nosotros.html">Nosotros</a></li>
-                <li><a href="assets/page/contacto.html">Contacto</a></li>
-                <li><a href="assets/page/catalogo.html">Catalogo</a></li>
-                <li><a href="assets/page/carrito.html"><i class="bi bi-cart3"></i> Carrito(0)</a></li>
-                <li><a href="assets/page/login.html">Login</a></li>
-            </ul>
-        </nav>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="bi bi-flower2"></i>
+                <span>Huerto Hogar</span>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="carrito.html"><i class="bi bi-cart3"></i> Carrito(0)</a></li>
+                    <li><a href="login.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
-    <main>
-        <section>
-            <form id="formUsuario">
-                <!--RUN-->
-                <label> RUN (sin punto ni guión): </label> <br>
-                <input type="text" id="run" minlength="7" maxlength="9" required><br><br>
-                <!--Nombre-->
-                <label>Nombre</label><br>
-                <input type="text" id="nombre" maxlength="100" required><br><br>
-                <!--Correo-->
-                <label>Correo</label><br>
-                <input type="email" id="correo" maxlength="100" required><br><br>
-                <!--Clave-->
-                <label>Clave</label><br>
-                <input type="password" id="clave" minlength="4" maxlength="10" required><br><br>
-                <!--Fecha (mayor 18)-->
-                <label>Fecha de nacimiento</label><br>
-                <input type="date" id="fecha" required><br><br>
 
-                <button type="submit">Enviar</button>
+    <!-- Hero Section -->
+    <section class="register-hero">
+        <div class="container">
+            <h1>Crea tu cuenta en Huerto Hogar</h1>
+            <p>Únete a nuestra comunidad y comienza a disfrutar de todos los beneficios de tener tu propio huerto</p>
+        </div>
+    </section>
 
-                <p id="mensaje" style="color:brown"></p>
-            </form>
-        </section>
-    </main>
-    <!-- SOLO AGREGAR ESTA LÍNEA -->
-    <script src="/static/js/bundle.js"></script>
-    <!-- 🔹 SDK de Firebase (versión 8.x, compatible con tu código actual) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <!-- Register Section -->
+    <section class="register-section">
+        <div class="container">
+            <div class="register-card animate fade-in-up">
+                <div class="card-header">
+                    <h2>Registro de Usuario</h2>
+                    <p>Completa tus datos para crear una cuenta</p>
+                </div>
 
+                <div class="card-body">
+                    <form id="formUsuario">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="run">RUN (sin punto ni guión)</label>
+                                <input type="text" id="run" class="form-control" minlength="7" maxlength="9"
+                                    placeholder="Ej: 123456789" required>
+                                <small class="form-text">Ingresa tu RUN sin puntos ni guión</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="nombre">Nombre Completo</label>
+                                <input type="text" id="nombre" class="form-control" maxlength="100"
+                                    placeholder="Tu nombre completo" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="correo">Correo Electrónico</label>
+                            <input type="email" id="correo" class="form-control" maxlength="100"
+                                placeholder="ejemplo@correo.com" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="clave">Contraseña</label>
+                                <input type="password" id="clave" class="form-control" minlength="4" maxlength="10"
+                                    placeholder="Mínimo 4 caracteres" required>
+                                <div class="password-strength">
+                                    <div class="strength-bar" id="passwordStrength"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="confirmClave">Confirmar Contraseña</label>
+                                <input type="password" id="confirmClave" class="form-control" minlength="4"
+                                    maxlength="10" placeholder="Repite tu contraseña" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="fecha">Fecha de Nacimiento</label>
+                            <input type="date" id="fecha" class="form-control" required>
+                            <small class="form-text">Debes ser mayor de 18 años</small>
+                        </div>
+
+                        <div class="terms-group">
+                            <input type="checkbox" id="terminos" required>
+                            <label for="terminos">
+                                Acepto los <a href="terminos.html">Términos y Condiciones</a>
+                                y la <a href="privacidad.html">Política de Privacidad</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-register">
+                            <i class="bi bi-person-plus"></i> Crear Cuenta
+                        </button>
+
+                        <div id="mensaje"></div>
+                    </form>
+
+                    <div class="login-footer">
+                        <p>¿Ya tienes una cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Huerto Hogar</h3>
+                    <p><i class="bi bi-geo-alt"></i> Dirección: Calle Verde 123, Santiago</p>
+                    <p><i class="bi bi-telephone"></i> Teléfono: +56 9 1234 5678</p>
+                    <p><i class="bi bi-envelope"></i> Email: info@huertohogar.cl</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Enlaces Rápidos</h3>
+                    <p><a href="index.html" style="color: white;">Inicio</a></p>
+                    <p><a href="nosotros.html" style="color: white;">Nosotros</a></p>
+                    <p><a href="catalogo.html" style="color: white;">Catálogo</a></p>
+                    <p><a href="contacto.html" style="color: white;">Contacto</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="#"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Huerto Hogar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script src="../js/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
+    <script>
+        // Animación para la tarjeta
+        document.addEventListener('DOMContentLoaded', function () {
+            const card = document.querySelector('.register-card');
+            card.classList.add('animate');
+
+            // Validación de contraseña
+            const claveInput = document.getElementById('clave');
+            const strengthBar = document.getElementById('passwordStrength');
+
+            claveInput.addEventListener('input', function () {
+                const password = this.value;
+                let strength = 0;
+
+                if (password.length >= 4) strength += 25;
+                if (password.length >= 6) strength += 25;
+                if (/[A-Z]/.test(password)) strength += 25;
+                if (/[0-9]/.test(password)) strength += 25;
+
+                strengthBar.style.width = strength + '%';
+
+                if (strength < 50) {
+                    strengthBar.style.backgroundColor = '#ff4444';
+                } else if (strength < 75) {
+                    strengthBar.style.backgroundColor = '#ffbb33';
+                } else {
+                    strengthBar.style.backgroundColor = '#00C851';
+                }
+            });
+
+            // Validación de confirmación de contraseña
+            const confirmClaveInput = document.getElementById('confirmClave');
+            confirmClaveInput.addEventListener('input', function () {
+                const clave = document.getElementById('clave').value;
+                const confirmClave = this.value;
+
+                if (confirmClave && clave !== confirmClave) {
+                    this.style.borderColor = '#ff4444';
+                    this.style.boxShadow = '0 0 0 3px rgba(255, 68, 68, 0.1)';
+                } else {
+                    this.style.borderColor = '#2E8B57';
+                    this.style.boxShadow = '0 0 0 3px rgba(46, 139, 87, 0.1)';
+                }
+            });
+
+            // Validación de edad (mayor de 18)
+            const fechaInput = document.getElementById('fecha');
+            fechaInput.addEventListener('change', function () {
+                const fechaNacimiento = new Date(this.value);
+                const hoy = new Date();
+                const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+                const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+
+                if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+                    edad--;
+                }
+
+                if (edad < 18) {
+                    alert('Debes ser mayor de 18 años para registrarte');
+                    this.value = '';
+                    this.style.borderColor = '#ff4444';
+                } else {
+                    this.style.borderColor = '#2E8B57';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
