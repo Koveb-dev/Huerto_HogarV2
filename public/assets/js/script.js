@@ -291,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("Creando usuario admin en Firebase Auth...");
                     const authResult = await crearUsuarioAuth(correo, clave);
                     if (!authResult.success) {
-                        mostrarMensaje(`⚠️ Usuario creado en Firestore pero error en Auth: ${authResult.message}`, "error");
+                        mostrarMensaje(` Usuario creado en Firestore pero error en Auth: ${authResult.message}`, "error");
                     }
                 }
 
@@ -311,14 +311,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     window.location.href = destino;
                 }, 2000);
             } else {
-                mostrarMensaje(`❌ Error: ${resultado.message}`, "error");
+                mostrarMensaje(` Error: ${resultado.message}`, "error");
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }
 
         } catch (error) {
             console.error("Error en el proceso de registro:", error);
-            mostrarMensaje(`❌ Error: ${error.message}`, "error");
+            mostrarMensaje(` Error: ${error.message}`, "error");
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
         }
@@ -332,10 +332,10 @@ document.addEventListener("DOMContentLoaded", () => {
 async function verificarConexionFirebase() {
     try {
         await db.collection('usuario').get();
-        console.log('✅ Conexión a Firebase establecida correctamente');
+        console.log(' Conexión a Firebase establecida correctamente');
         return true;
     } catch (error) {
-        console.error('❌ Error de conexión a Firebase:', error);
+        console.error(' Error de conexión a Firebase:', error);
         return false;
     }
 }
@@ -368,15 +368,15 @@ async function verificarColeccionUsuario() {
             timestamp: new Date().toISOString(),
             mensaje: "Conexión exitosa"
         });
-        console.log("✅ Documento de prueba creado en colección 'usuario'");
+        console.log(" Documento de prueba creado en colección 'usuario'");
 
         // Eliminar el documento de prueba
         await testRef.delete();
-        console.log("✅ Documento de prueba eliminado");
+        console.log(" Documento de prueba eliminado");
 
         return true;
     } catch (error) {
-        console.error("❌ Error con colección 'usuario':", error);
+        console.error(" Error con colección 'usuario':", error);
         return false;
     }
 }
