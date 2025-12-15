@@ -333,18 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("Usuario registrado exitosamente en Firestore");
                 mostrarMensaje("✅ Usuario registrado exitosamente", "success");
 
-<<<<<<< HEAD
-=======
-                // Si es el admin, también crearlo en Firebase Auth
-                if (correo === "admin@tiendahuerto.cl") {
-                    console.log("Creando usuario admin en Firebase Auth...");
-                    const authResult = await crearUsuarioAuth(correo, clave);
-                    if (!authResult.success) {
-                        mostrarMensaje(`⚠️ Usuario creado en Firestore pero error en Auth: ${authResult.message}`, "error");
-                    }
-                }
-
->>>>>>> parent of 02a832d (Actualizacion script.js)
                 // Limpiar formulario después de éxito
                 limpiarFormulario();
 
