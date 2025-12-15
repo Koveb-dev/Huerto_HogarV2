@@ -72,14 +72,6 @@ async function registrarUsuarioEnFirestore(usuario) {
         // Agregar campos adicionales
         usuario.fechaRegistro = new Date().toISOString();
         usuario.activo = true;
-
-        // Determinar rol basado en correo (como en login.js)
-        if (usuario.correo === "admin@tiendahuerto.cl") {
-            usuario.rol = "admin";
-        } else {
-            usuario.rol = "cliente";
-        }
-
         usuario.carrito = [];
 
         // Guardar en Firestore - usando 'usuario' (singular) para coincidir con login.js
@@ -140,14 +132,37 @@ function limpiarFormulario() {
 // Función para crear usuario también en Firebase Auth (opcional, pero recomendado)
 async function crearUsuarioAuth(correo, clave) {
     try {
-        await firebase.auth().createUserWithEmailAndPassword(correo, clave);
-        return { success: true };
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(correo, clave);
+        return { success: true, uid: userCredential.user.uid };
     } catch (error) {
         console.error("Error creando usuario en Auth:", error);
         return {
             success: false,
             message: error.message
         };
+    }
+}
+
+// Función para crear registro de vendedor
+async function registrarVendedor(uid, data) {
+    try {
+        await db.collection('vendedores').doc(uid).set({
+            uid,
+            email: data.correo,
+            nombre: data.nombre,
+            telefono: data.telefono || '',
+            direccion: data.direccion || '',
+            bio: '',
+            fechaRegistro: firebase.firestore.FieldValue.serverTimestamp(),
+            estado: 'activo',
+            totalVentas: 0,
+            productos: [],
+            rol: 'vendedor'
+        });
+        return { success: true };
+    } catch (error) {
+        console.error("Error registrando vendedor:", error);
+        return { success: false, message: error.message };
     }
 }
 
@@ -168,6 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const correoInput = document.getElementById("correo");
     const claveInput = document.getElementById("clave");
     const fechaInput = document.getElementById("fecha");
+    const rolInput = document.getElementById("rol");
     const mensaje = document.getElementById("mensaje");
 
     // Limpiar los input y mensajes flotantes automáticamente
@@ -196,6 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const nombre = nombreInput.value.trim();
         const correo = correoInput.value.trim();
         const clave = claveInput ? claveInput.value : "";
+        const rol = rolInput ? rolInput.value : "";
         const fecha = fechaInput.value;
 
         console.log("Datos capturados:", { run, nombre, correo, fecha });
@@ -226,6 +243,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (claveInput && clave.length < 4) {
             claveInput.setCustomValidity("La clave debe tener al menos 4 caracteres");
             claveInput.reportValidity();
+            return;
+        }
+
+        // Validación de rol
+        if (!rol) {
+            rolInput.setCustomValidity("Selecciona un rol");
+            rolInput.reportValidity();
             return;
         }
 
@@ -265,45 +289,60 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Crear objeto usuario (sin el campo 'clave' si es admin@tiendahuerto.cl)
+            // Crear objeto usuario base
             const usuario = {
                 run: run,
                 nombre: nombre,
                 correo: correo,
-                fechaNacimiento: fecha
+                fechaNacimiento: fecha,
+                rol: rol
             };
 
-            // Solo agregar clave si no es el admin (porque admin usa Firebase Auth)
-            if (correo !== "admin@tiendahuerto.cl") {
+            // Solo guardar clave en Firestore si no es admin (respetar flujo previo)
+            if (rol !== "admin") {
                 usuario.clave = clave;
             }
 
+            // Crear usuario en Firebase Auth (para todos los roles)
+            console.log("Creando usuario en Firebase Auth...");
+            const authResult = await crearUsuarioAuth(correo, clave);
+            if (!authResult.success) {
+                mostrarMensaje(` Error creando usuario en Auth: ${authResult.message}`, "error");
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                return;
+            }
+
+            usuario.uid = authResult.uid;
+
             console.log("Registrando usuario en Firestore...");
-            // Registrar en Firestore
             const resultado = await registrarUsuarioEnFirestore(usuario);
+
+            // Si el rol es vendedor, crear registro adicional
+            if (resultado.success && rol === "vendedor") {
+                const vendedorResult = await registrarVendedor(authResult.uid, usuario);
+                if (!vendedorResult.success) {
+                    mostrarMensaje(` Usuario creado pero error al crear vendedor: ${vendedorResult.message}`, "error");
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    return;
+                }
+            }
 
             if (resultado.success) {
                 console.log("Usuario registrado exitosamente en Firestore");
                 mostrarMensaje("✅ Usuario registrado exitosamente", "success");
-
-                // Si es el admin, también crearlo en Firebase Auth
-                if (correo === "admin@tiendahuerto.cl") {
-                    console.log("Creando usuario admin en Firebase Auth...");
-                    const authResult = await crearUsuarioAuth(correo, clave);
-                    if (!authResult.success) {
-                        mostrarMensaje(` Usuario creado en Firestore pero error en Auth: ${authResult.message}`, "error");
-                    }
-                }
 
                 // Limpiar formulario después de éxito
                 limpiarFormulario();
 
                 // Redirigir después de 2 segundos
                 setTimeout(() => {
-                    // Determinar destino según el rol
                     let destino = "";
-                    if (correo === "admin@tiendahuerto.cl") {
+                    if (rol === "admin") {
                         destino = `assets/page/perfilAdmin.html?nombre=${encodeURIComponent(nombre)}&id=${resultado.id}`;
+                    } else if (rol === "vendedor") {
+                        destino = `assets/page/perfilVendedor.html?nombre=${encodeURIComponent(nombre)}&id=${resultado.id}`;
                     } else {
                         destino = `assets/page/perfilCliente.html?nombre=${encodeURIComponent(nombre)}&id=${resultado.id}`;
                     }

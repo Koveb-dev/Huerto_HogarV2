@@ -21,8 +21,15 @@ const LoginWrapper = () => {
                 if (profileResult.success) {
                     setUserProfile(profileResult.data);
                     
-                    // Redirigir según el rol (manteniendo tu lógica original)
-                    history.push(profileResult.data.rol === "admin" ? "/perfil-admin" : "/perfil-cliente");
+                    // Redirigir según el rol (admin | vendedor | cliente)
+                    const rol = profileResult.data.rol;
+                    if (rol === "admin") {
+                        history.push("/perfil-admin");
+                    } else if (rol === "vendedor") {
+                        history.push("/perfil-vendedor");
+                    } else {
+                        history.push("/perfil-cliente");
+                    }
                 } else {
                     // Si no hay perfil, redirigir a perfil-cliente por defecto
                     history.push("/perfil-cliente");

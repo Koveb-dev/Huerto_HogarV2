@@ -2,6 +2,20 @@
 let currentVendedorId = null;
 let vendedorData = null;
 
+// Inicializar Firebase si no está inicializado (SDK v8)
+const firebaseConfig = {
+    apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
+    authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
+    projectId: "tiendahuertohogar-2ce3a",
+    storageBucket: "tiendahuertohogar-2ce3a.appspot.com",
+    messagingSenderId: "857983411223",
+    appId: "1:857983411223:web:a1c200cd07b7fd63b36852",
+    measurementId: "G-TX342PY82Y"
+};
+if (!firebase.apps?.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Perfil Vendedor inicializando...');
@@ -879,12 +893,18 @@ async function cargarDatosIniciales() {
     const hoy = new Date();
     const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
     
-    document.getElementById('fechaDesde').value = primerDiaMes.toISOString().split('T')[0];
-    document.getElementById('fechaHasta').value = hoy.toISOString().split('T')[0];
+    const fechaDesdeEl = document.getElementById('fechaDesde');
+    const fechaHastaEl = document.getElementById('fechaHasta');
+    const fechaFinEl = document.getElementById('fechaFin'); // puede no existir
+
+    if (fechaDesdeEl) fechaDesdeEl.value = primerDiaMes.toISOString().split('T')[0];
+    if (fechaHastaEl) fechaHastaEl.value = hoy.toISOString().split('T')[0];
     
-    // Configurar fecha de fin del mes para reportes
-    const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
-    document.getElementById('fechaFin').value = ultimoDiaMes.toISOString().split('T')[0];
+    // Configurar fecha de fin del mes para reportes (solo si existe el elemento)
+    if (fechaFinEl) {
+        const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+        fechaFinEl.value = ultimoDiaMes.toISOString().split('T')[0];
+    }
 }
 
 // Manejar cierre de sesión
