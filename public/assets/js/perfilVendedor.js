@@ -35,30 +35,35 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 // ==================== AUTENTICACIÓN ====================
 async function verificarAutenticacion() {
-    try {
-        const user = firebase.auth().currentUser;
-        if (!user) {
-            window.location.href = '../html/login.html';
-            return;
-        }
-        
-        currentVendedorId = user.uid;
-        
-        // Verificar rol de vendedor
-        const userDoc = await firebase.firestore().collection('vendedores').doc(currentVendedorId).get();
-        
-        if (!userDoc.exists) {
-            // Crear registro de vendedor si no existe
-            await crearRegistroVendedor(user);
-        } else {
-            vendedorData = userDoc.data();
-            actualizarUIUsuario();
-        }
-        
-    } catch (error) {
-        console.error('Error en autenticación:', error);
-        mostrarError('Error de autenticación');
-    }
+    return new Promise((resolve) => {
+        firebase.auth().onAuthStateChanged(async (user) => {
+            try {
+                if (!user) {
+                    window.location.href = '../html/login.html';
+                    return resolve(false);
+                }
+    
+                currentVendedorId = user.uid;
+    
+                // Verificar rol de vendedor
+                const userDoc = await firebase.firestore().collection('vendedores').doc(currentVendedorId).get();
+    
+                if (!userDoc.exists) {
+                    // Crear registro de vendedor si no existe
+                    await crearRegistroVendedor(user);
+                } else {
+                    vendedorData = userDoc.data();
+                    actualizarUIUsuario();
+                }
+    
+                resolve(true);
+            } catch (error) {
+                console.error('Error en autenticación:', error);
+                mostrarError('Error de autenticación');
+                resolve(false);
+            }
+        });
+    });
 }
 
 async function crearRegistroVendedor(user) {
