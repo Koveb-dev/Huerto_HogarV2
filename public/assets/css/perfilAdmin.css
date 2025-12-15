@@ -1,25 +1,34 @@
+:root {
+    --primary: #2e8b57;
+    --primary-dark: #236b47;
+    --accent: #ffd700;
+    --neutral: #f8fafc;
+    --text: #1e293b;
+    --muted: #64748b;
+}
+
 /* Botón Primario - Verde */
 .btn-primary {
-    background: #10b981 !important;
+    background: var(--primary) !important;
     color: white !important;
-    border: 1px solid #10b981 !important;
+    border: 1px solid var(--primary) !important;
 }
 
 .btn-primary:hover {
-    background: #047857 !important;
-    border-color: #047857 !important;
+    background: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
 }
 
-/* Botón Secundario - Azul */
+/* Botón Secundario - Dorado */
 .btn-secondary {
-    background: #3b82f6 !important;
-    color: white !important;
-    border: 1px solid #3b82f6 !important;
+    background: var(--accent) !important;
+    color: #3b3b3b !important;
+    border: 1px solid var(--accent) !important;
 }
 
 .btn-secondary:hover {
-    background: #1d4ed8 !important;
-    border-color: #1d4ed8 !important;
+    background: #e0c200 !important;
+    border-color: #e0c200 !important;
 }
 
 /* Botón Peligro - Rojo */
@@ -34,28 +43,28 @@
     border-color: #b91c1c !important;
 }
 
-/* Botón Advertencia - Amarillo */
+/* Botón Advertencia - Ámbar */
 .btn-warning {
-    background: #d97706 !important;
-    color: white !important;
-    border: 1px solid #d97706 !important;
+    background: #f59e0b !important;
+    color: #1e1e1e !important;
+    border: 1px solid #f59e0b !important;
 }
 
 .btn-warning:hover {
-    background: #b45309 !important;
-    border-color: #b45309 !important;
+    background: #d97706 !important;
+    border-color: #d97706 !important;
 }
 
-/* Botón Info - Cyan */
+/* Botón Info - Verde claro */
 .btn-info {
-    background: #06b6d4 !important;
+    background: #3fbf8c !important;
     color: white !important;
-    border: 1px solid #06b6d4 !important;
+    border: 1px solid #3fbf8c !important;
 }
 
 .btn-info:hover {
-    background: #0e7490 !important;
-    border-color: #0e7490 !important;
+    background: #32976f !important;
+    border-color: #32976f !important;
 }
 
 /* Tamaños de botones */
@@ -105,8 +114,8 @@
 
 body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: #f8fafc;
-    color: #334155;
+    background: var(--neutral);
+    color: var(--text);
     line-height: 1.6;
 }
 
@@ -119,7 +128,7 @@ body {
 /* Header */
 .admin-header {
     background: white;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 2px solid var(--primary);
     padding: 1rem 2rem;
     position: fixed;
     top: 0;
@@ -134,7 +143,7 @@ body {
 .logo {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--primary);
     text-decoration: none;
 }
 
@@ -164,7 +173,7 @@ body {
 .sidebar-title {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #64748b;
+    color: var(--primary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 1rem;
@@ -191,13 +200,13 @@ body {
 }
 
 .menu-link:hover {
-    background: #f1f5f9;
-    color: #1e293b;
+    background: #eef6f0;
+    color: var(--primary);
 }
 
 .menu-link.active {
-    background: #eff6ff;
-    color: #2563eb;
+    background: #e6f4ec;
+    color: var(--primary);
 }
 
 .menu-icon {
@@ -261,12 +270,13 @@ body {
     padding: 2rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     margin-bottom: 2rem;
+    border-left: 4px solid var(--primary);
 }
 
 .welcome-title {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1e293b;
+    color: var(--primary);
     margin-bottom: 0.5rem;
 }
 
@@ -298,15 +308,16 @@ body {
 }
 
 .blue-card {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(135deg, #2e8b57, #236b47);
 }
 
 .green-card {
-    background: linear-gradient(135deg, #10b981, #047857);
+    background: linear-gradient(135deg, #2e8b57, #236b47);
 }
 
 .yellow-card {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+    background: linear-gradient(135deg, #ffd700, #e0c200);
+    color: #1f2933;
 }
 
 .card-content {
@@ -368,7 +379,7 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border: 1px solid #f1f5f9;
+    border: 1px solid #e2e8f0;
     position: relative;
     overflow: hidden;
 }
@@ -376,12 +387,12 @@ body {
 .nav-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-color: #3b82f6;
+    border-color: var(--primary);
 }
 
 .nav-icon {
     font-size: 2.5rem;
-    color: #3b82f6;
+    color: var(--primary);
     margin-bottom: 1rem;
     transition: transform 0.3s ease;
 }
@@ -471,9 +482,9 @@ body {
 }
 
 .crud-table th {
-    background: #f8fafc;
+    background: #f0f7f2;
     font-weight: 600;
-    color: #475569;
+    color: var(--primary-dark);
     border-bottom: 2px solid #e2e8f0;
 }
 
