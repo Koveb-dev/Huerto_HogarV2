@@ -34,12 +34,21 @@ const firebaseConfigHeader = {
       if (navLogin) navLogin.style.display = 'none';
       if (navLogout) navLogout.style.display = 'inline-flex';
       if (navUser) navUser.textContent = user.displayName || user.email || 'Cliente';
-      localStorage.setItem('usuario', JSON.stringify({
+      let storedUsuario = {};
+      try {
+        storedUsuario = JSON.parse(localStorage.getItem('usuario')) || {};
+      } catch (_) {
+        storedUsuario = {};
+      }
+
+      const usuario = {
         id: user.uid,
-        correo: user.email || '',
-        nombre: user.displayName || 'Cliente',
-        rol: 'cliente'
-      }));
+        correo: user.email || storedUsuario.correo || '',
+        nombre: user.displayName || storedUsuario.nombre || 'Cliente',
+        // Respetar el rol previo (admin/vendedor) si ya fue establecido
+        rol: storedUsuario.rol || 'cliente'
+      };
+      localStorage.setItem('usuario', JSON.stringify(usuario));
     } else {
       if (navLogin) navLogin.style.display = 'inline-flex';
       if (navLogout) navLogout.style.display = 'none';

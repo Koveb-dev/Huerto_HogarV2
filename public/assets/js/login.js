@@ -120,16 +120,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     };
                     localStorage.setItem("usuario", JSON.stringify(usuario));
 
+                    const destino =
+                        rol === "admin"
+                            ? "perfilAdmin"
+                            : rol === "vendedor"
+                                ? "perfilVendedor"
+                                : "perfilCliente";
+
                     mensaje.classList.remove("d-none", "alert-danger");
                     mensaje.classList.add("alert-success");
-                    mensaje.innerText = `Bienvenido ${rol === "vendedor" ? "Vendedor" : "Cliente"}, redirigiendo...`;
-                    setTimeout(() => {
-                        if (rol === "vendedor") {
-                            window.location.href = `perfilVendedor.html`;
-                        } else {
-                            window.location.href = `perfilCliente.html`;
-                        }
-                    }, 1000);
+                    mensaje.innerText = `Bienvenido ${rol === "admin" ? "Administrador" : rol === "vendedor" ? "Vendedor" : "Cliente"}, redirigiendo...`;
+                    setTimeout(() => window.location.href = `${destino}.html`, 1000);
                     return;
                 }
             } catch (error) {
@@ -159,16 +160,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 const usuario = { nombre, correo, rol, uid: userData.uid || null };
                 localStorage.setItem("usuario", JSON.stringify(usuario));
 
+                const destino =
+                    rol === "admin"
+                        ? "perfilAdmin"
+                        : rol === "vendedor"
+                            ? "perfilVendedor"
+                            : "perfilCliente";
+
                 mensaje.classList.remove("d-none", "alert-danger");
                 mensaje.classList.add("alert-success");
-                mensaje.innerText = `Bienvenido ${rol === "vendedor" ? "Vendedor" : "Cliente"}, redirigiendo...`;
-                setTimeout(() => {
-                    if (rol === "vendedor") {
-                        window.location.href = `perfilVendedor.html`;
-                    } else {
-                        window.location.href = `perfilCliente.html`;
-                    }
-                }, 1000);
+                mensaje.innerText = `Bienvenido ${rol === "admin" ? "Administrador" : rol === "vendedor" ? "Vendedor" : "Cliente"}, redirigiendo...`;
+                setTimeout(() => window.location.href = `${destino}.html`, 1000);
             } else {
                 mensaje.classList.remove("d-none", "alert-success");
                 mensaje.classList.add("alert-danger");
