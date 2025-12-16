@@ -123,12 +123,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const noOrders = document.getElementById('no-orders');
             const ordersTable = document.getElementById('orders-table');
 
+            if (ordersBody) ordersBody.innerHTML = '';
+
             if (ordersQuery.empty) {
                 if (noOrders) noOrders.style.display = 'block';
                 if (ordersTable) ordersTable.style.display = 'none';
                 updateOrderStats(0, 0, 0, 0);
                 return;
             }
+
+            if (noOrders) noOrders.style.display = 'none';
+            if (ordersTable) ordersTable.style.display = 'table';
 
             let totalOrders = 0;
             let completedOrders = 0;
@@ -139,10 +144,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const order = doc.data();
                 totalOrders++;
 
-                if (order.estado === 'entregado') {
+                const status = (order.estado || 'desconocido').toLowerCase();
+                if (status === 'entregado') {
                     completedOrders++;
                     totalSpent += order.total || 0;
-                } else if (order.estado === 'pendiente') {
+                } else if (status === 'pendiente' || status === 'procesando') {
                     pendingOrders++;
                 }
 
@@ -150,16 +156,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     const row = ordersBody.insertRow();
                     row.innerHTML = `
                         <td>#${doc.id.substring(0, 8)}</td>
-                        <td>${order.fecha?.toDate().toLocaleDateString()}</td>
+                        <td>${formatDate(order.fecha)}</td>
                         <td>${order.productos?.length || 0} productos</td>
-                        <td>$${(order.total || 0).toLocaleString()}</td>
-                        <td><span class="badge-status ${getStatusClass(order.estado)}">${order.estado}</span></td>
+                        <td>${formatCurrency(order.total)}</td>
+                        <td><span class="badge-status ${getStatusClass(status)}">${getStatusLabel(status)}</span></td>
                         <td>
                             <button class="btn-outline-primary btn-sm" onclick="viewOrder('${doc.id}')">
                                 Ver Detalles
                             </button>
                         </td>
                     `;
+                    row.dataset.status = status;
                 }
             });
 
@@ -169,11 +176,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    const formatDate = (fecha) => {
+        try {
+            return fecha?.toDate().toLocaleDateString('es-CL') || '-';
+        } catch (_) {
+            return '-';
+        }
+    };
+
+    const formatCurrency = (valor = 0) => {
+        try {
+            return (valor || 0).toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
+        } catch (_) {
+            return `$${(valor || 0).toLocaleString()}`;
+        }
+    };
+
+    const getStatusLabel = (status) => {
+        switch (status) {
+            case 'entregado': return 'Entregado';
+            case 'pendiente': return 'Pendiente';
+            case 'procesando': return 'En proceso';
+            case 'cancelado': return 'Cancelado';
+            default: return status || 'Desconocido';
+        }
+    };
+
     const getStatusClass = (status) => {
         switch (status) {
             case 'entregado': return 'bg-success';
             case 'pendiente': return 'bg-warning';
             case 'procesando': return 'bg-info';
+            case 'cancelado': return 'bg-danger';
             default: return 'bg-secondary';
         }
     };
@@ -269,8 +303,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const rows = document.querySelectorAll('#orders-body tr');
 
             rows.forEach(row => {
-                const statusCell = row.querySelector('.badge-status');
-                if (status === 'all' || statusCell.textContent === status) {
+                const rowStatus = row.dataset.status || '';
+                if (status === 'todos' || rowStatus === status) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
@@ -278,6 +312,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+
+    // Ver pedido (placeholder)
+    window.viewOrder = (orderId) => {
+        showAlert(`Detalle del pedido #${orderId.substring(0, 8)} pronto disponible`, 'info');
+    };
 
     // Cerrar sesión
     if (logoutLink) {
@@ -296,7 +335,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Mostrar alerta
     const showAlert = (message, type) => {
         const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'}`;
+        const alertType = type === 'error' ? 'danger' : (type === 'info' ? 'info' : 'success');
+        alertDiv.className = `alert alert-${alertType}`;
         alertDiv.textContent = message;
 
         const container = document.querySelector('.container');

@@ -35,6 +35,57 @@ const PerfilCliente = () => {
   });
   const [message, setMessage] = useState({ type: '', text: '' });
   const history = useHistory();
+  const defaultAvatar = 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=600&q=80';
+
+  const formatCurrency = (value = 0) => {
+    try {
+      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(value || 0);
+    } catch {
+      return `$${(value || 0).toLocaleString()}`;
+    }
+  };
+
+  const formatDate = (dateValue) => {
+    if (!dateValue) return '-';
+    try {
+      const date = dateValue.seconds ? new Date(dateValue.seconds * 1000) : new Date(dateValue);
+      return date.toLocaleDateString('es-CL');
+    } catch {
+      return '-';
+    }
+  };
+
+  const normalizeStatus = (status = '') => {
+    const map = {
+      delivered: 'entregado',
+      pending: 'pendiente',
+      processing: 'procesando',
+      cancelled: 'cancelado'
+    };
+    return map[status] || status.toLowerCase();
+  };
+
+  const getStatusLabel = (status = '') => {
+    const normalized = normalizeStatus(status);
+    const labels = {
+      entregado: 'Entregado',
+      pendiente: 'Pendiente',
+      procesando: 'En proceso',
+      cancelado: 'Cancelado'
+    };
+    return labels[normalized] || (normalized ? normalized.charAt(0).toUpperCase() + normalized.slice(1) : 'Desconocido');
+  };
+
+  const getStatusClass = (status = '') => {
+    const normalized = normalizeStatus(status);
+    switch (normalized) {
+      case 'entregado': return 'bg-success';
+      case 'pendiente': return 'bg-warning';
+      case 'procesando': return 'bg-info';
+      case 'cancelado': return 'bg-danger';
+      default: return 'bg-secondary';
+    }
+  };
 
   // Redirigir si no está autenticado
   useEffect(() => {
@@ -167,12 +218,12 @@ const PerfilCliente = () => {
 
   const getOrderStats = () => {
     const total = orders.length;
-    const completed = orders.filter(order => order.status === 'delivered').length;
+    const completed = orders.filter(order => normalizeStatus(order.status) === 'entregado').length;
     const pending = orders.filter(order =>
-      ['pending', 'processing'].includes(order.status)
+      ['pendiente', 'procesando'].includes(normalizeStatus(order.status))
     ).length;
     const totalSpent = orders
-      .filter(order => order.status === 'delivered')
+      .filter(order => normalizeStatus(order.status) === 'entregado')
       .reduce((sum, order) => sum + (order.total || 0), 0);
 
     return { total, completed, pending, totalSpent };
@@ -198,7 +249,7 @@ const PerfilCliente = () => {
       <section className="profile-header">
         <div className="container">
           <img
-            src={userProfile?.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"}
+            src={userProfile?.photoURL || defaultAvatar}
             alt="Foto de perfil"
             className="profile-avatar"
           />
@@ -482,15 +533,12 @@ const PerfilCliente = () => {
                         {orders.map((order, index) => (
                           <tr key={index} className="order-card">
                             <td>#{order.id}</td>
-                            <td>{new Date(order.date).toLocaleDateString()}</td>
+                            <td>{formatDate(order.date)}</td>
                             <td>{order.items?.length || 0} productos</td>
-                            <td>${order.total?.toLocaleString()}</td>
+                            <td>{formatCurrency(order.total)}</td>
                             <td>
-                              <span className={`badge-status ${order.status === 'delivered' ? 'bg-success' :
-                                  order.status === 'pending' ? 'bg-warning' :
-                                    order.status === 'processing' ? 'bg-info' : 'bg-danger'
-                                }`}>
-                                {order.status}
+                              <span className={`badge-status ${getStatusClass(order.status)}`}>
+                                {getStatusLabel(order.status)}
                               </span>
                             </td>
                           </tr>
