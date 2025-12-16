@@ -1,13 +1,12 @@
-// perfilCliente.js
-document.addEventListener("DOMContentLoaded", () => {
-    // Verificar si el usuario está logueado
+// perfilCliente.js - versión renovada con Firebase v8
+document.addEventListener('DOMContentLoaded', () => {
     const usuario = JSON.parse(localStorage.getItem('usuario'));
     if (!usuario || usuario.rol !== 'cliente') {
         window.location.href = 'login.html';
         return;
     }
 
-    // Inicializar Firebase
+    // Firebase v8
     const firebaseConfig = {
         apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
         authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
@@ -17,308 +16,349 @@ document.addEventListener("DOMContentLoaded", () => {
         appId: "1:857983411223:web:a1c200cd07b7fd63b36852",
         measurementId: "G-TX342PY82Y"
     };
-
-    if (!firebase.apps?.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
-
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // Elementos del DOM
-    const welcomeMessage = document.getElementById('welcome-message');
-    const userEmail = document.getElementById('user-email');
-    const profileAvatar = document.getElementById('profile-avatar');
+    // DOM refs
+    const avatar = document.getElementById('profile-avatar');
+    const avatarInput = document.getElementById('avatar-input');
+    const welcome = document.getElementById('welcome-message');
+    const emailLbl = document.getElementById('user-email');
     const logoutLink = document.getElementById('logout-link');
     const cartCount = document.getElementById('cart-count');
+    const completion = document.getElementById('completion-percentage');
+    const progress = document.getElementById('profile-progress');
+    const orderFilter = document.getElementById('order-filter');
+    const ordersBody = document.getElementById('orders-body');
+    const ordersTable = document.getElementById('orders-table');
+    const noOrders = document.getElementById('no-orders');
+    const addressesContainer = document.getElementById('addresses-container');
+    const addAddressBtn = document.getElementById('add-address-btn');
+    const wishlistContainer = document.getElementById('wishlist-container');
+    const emptyWishlist = document.getElementById('empty-wishlist');
 
-    // Actualizar información del usuario
-    if (welcomeMessage) {
-        welcomeMessage.textContent = `Bienvenido, ${usuario.nombre}`;
-    }
+    // Inputs
+    const fullName = document.getElementById('fullName');
+    const phone = document.getElementById('phone');
+    const email = document.getElementById('email');
+    const about = document.getElementById('about');
+    const profileForm = document.getElementById('profile-form');
+    const prefEmail = document.getElementById('emailNotifications');
+    const prefVeg = document.getElementById('favVegetables');
+    const prefFruit = document.getElementById('favFruits');
+    const prefOrg = document.getElementById('favOrganic');
+    const savePrefs = document.getElementById('save-preferences');
 
-    if (userEmail) {
-        userEmail.textContent = usuario.correo || '';
-    }
+    const totalOrdersEl = document.getElementById('total-orders');
+    const completedOrdersEl = document.getElementById('completed-orders');
+    const pendingOrdersEl = document.getElementById('pending-orders');
+    const totalSpentEl = document.getElementById('total-spent');
 
-    // Cargar carrito del localStorage
-    const updateCartCount = () => {
+    const defaultAvatar = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+    const savedAvatar = localStorage.getItem('usuarioAvatar');
+    if (avatar) avatar.src = savedAvatar || defaultAvatar;
+
+    const setCartCount = () => {
         const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-        if (cartCount) {
-            cartCount.textContent = carrito.length;
-        }
+        if (cartCount) cartCount.textContent = carrito.length;
     };
+    setCartCount();
 
-    updateCartCount();
-
-    // Cargar datos adicionales del usuario desde Firestore
-    const loadUserData = async () => {
-        try {
-            const userDoc = await db.collection('usuarios').doc(usuario.id).get();
-            if (userDoc.exists) {
-                const userData = userDoc.data();
-                // Actualizar campos del formulario si existen
-                const fullNameInput = document.getElementById('fullName');
-                const phoneInput = document.getElementById('phone');
-                const emailInput = document.getElementById('email');
-                const aboutInput = document.getElementById('about');
-
-                if (fullNameInput && userData.nombre) {
-                    fullNameInput.value = userData.nombre;
-                }
-                if (phoneInput && userData.telefono) {
-                    phoneInput.value = userData.telefono;
-                }
-                if (emailInput && userData.email) {
-                    emailInput.value = userData.email;
-                }
-                if (aboutInput && userData.sobreMi) {
-                    aboutInput.value = userData.sobreMi;
-                }
-
-                // Calcular y mostrar progreso del perfil
-                updateProfileCompletion();
-            }
-        } catch (error) {
-            console.error("Error cargando datos del usuario:", error);
-        }
-    };
-
-    // Calcular completitud del perfil
-    const updateProfileCompletion = () => {
-        const fields = [
-            document.getElementById('fullName'),
-            document.getElementById('phone'),
-            document.getElementById('about')
-        ];
-
-        let completed = 0;
-        fields.forEach(field => {
-            if (field && field.value.trim() !== '') {
-                completed++;
-            }
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            const target = document.getElementById(btn.dataset.target);
+            if (target) target.classList.add('active');
         });
+    });
 
-        const percentage = Math.round((completed / fields.length) * 100);
-        const progressBar = document.getElementById('profile-progress');
-        const percentageSpan = document.getElementById('completion-percentage');
+    // Avatar upload (local only)
+    if (avatarInput && avatar) {
+        avatarInput.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                avatar.src = reader.result;
+                localStorage.setItem('usuarioAvatar', reader.result);
+                showAlert('Foto actualizada (solo local).', 'success');
+            };
+            reader.onerror = () => showAlert('No se pudo cargar la imagen.', 'error');
+            reader.readAsDataURL(file);
+        });
+    }
 
-        if (progressBar) {
-            progressBar.style.width = `${percentage}%`;
-        }
-        if (percentageSpan) {
-            percentageSpan.textContent = `${percentage}%`;
-        }
-    };
-
-    // Cargar pedidos del usuario
-    const loadUserOrders = async () => {
-        try {
-            const ordersQuery = await db.collection('pedidos')
-                .where('usuarioId', '==', usuario.id)
-                .orderBy('fecha', 'desc')
-                .get();
-
-            const ordersBody = document.getElementById('orders-body');
-            const noOrders = document.getElementById('no-orders');
-            const ordersTable = document.getElementById('orders-table');
-
-            if (ordersBody) ordersBody.innerHTML = '';
-
-            if (ordersQuery.empty) {
-                if (noOrders) noOrders.style.display = 'block';
-                if (ordersTable) ordersTable.style.display = 'none';
-                updateOrderStats(0, 0, 0, 0);
-                return;
-            }
-
-            if (noOrders) noOrders.style.display = 'none';
-            if (ordersTable) ordersTable.style.display = 'table';
-
-            let totalOrders = 0;
-            let completedOrders = 0;
-            let pendingOrders = 0;
-            let totalSpent = 0;
-
-            ordersQuery.forEach(doc => {
-                const order = doc.data();
-                totalOrders++;
-
-                const status = (order.estado || 'desconocido').toLowerCase();
-                if (status === 'entregado') {
-                    completedOrders++;
-                    totalSpent += order.total || 0;
-                } else if (status === 'pendiente' || status === 'procesando') {
-                    pendingOrders++;
-                }
-
-                if (ordersBody) {
-                    const row = ordersBody.insertRow();
-                    row.innerHTML = `
-                        <td>#${doc.id.substring(0, 8)}</td>
-                        <td>${formatDate(order.fecha)}</td>
-                        <td>${order.productos?.length || 0} productos</td>
-                        <td>${formatCurrency(order.total)}</td>
-                        <td><span class="badge-status ${getStatusClass(status)}">${getStatusLabel(status)}</span></td>
-                        <td>
-                            <button class="btn-outline-primary btn-sm" onclick="viewOrder('${doc.id}')">
-                                Ver Detalles
-                            </button>
-                        </td>
-                    `;
-                    row.dataset.status = status;
-                }
-            });
-
-            updateOrderStats(totalOrders, completedOrders, pendingOrders, totalSpent);
-        } catch (error) {
-            console.error("Error cargando pedidos:", error);
-        }
+    const showAlert = (msg, type = 'success') => {
+        const container = document.querySelector('.container');
+        if (!container) return;
+        const div = document.createElement('div');
+        const alertType = type === 'error' ? 'danger' : (type === 'info' ? 'info' : 'success');
+        div.className = `alert alert-${alertType}`;
+        div.textContent = msg;
+        div.style.margin = '10px 0';
+        container.prepend(div);
+        setTimeout(() => div.remove(), 3000);
     };
 
     const formatDate = (fecha) => {
+        try { return fecha?.toDate().toLocaleDateString('es-CL') || '-'; }
+        catch { return '-'; }
+    };
+    const formatMoney = (val = 0) => {
+        try { return (val || 0).toLocaleString('es-CL', { style: 'currency', currency: 'CLP' }); }
+        catch { return `$${(val || 0).toLocaleString()}`; }
+    };
+    const normalizeStatus = (status = '') => {
+        const s = status.toLowerCase();
+        if (['pending','pendiente'].includes(s)) return 'pendiente';
+        if (['processing','procesando','en proceso'].includes(s)) return 'procesando';
+        if (['delivered','entregado'].includes(s)) return 'entregado';
+        if (['cancelled','cancelado'].includes(s)) return 'cancelado';
+        return s || 'desconocido';
+    };
+    const statusLabel = (s) => {
+        const map = { pendiente:'Pendiente', procesando:'En proceso', entregado:'Entregado', cancelado:'Cancelado' };
+        return map[s] || s;
+    };
+    const statusClass = (s) => {
+        const map = { pendiente:'bg-warning', procesando:'bg-info', entregado:'bg-success', cancelado:'bg-danger' };
+        return map[s] || 'bg-secondary';
+    };
+
+    const updateCompletion = () => {
+        const fields = [fullName, phone, about].filter(Boolean);
+        const filled = fields.filter(f => f.value && f.value.trim() !== '').length;
+        const pct = Math.round((filled / (fields.length || 1)) * 100);
+        if (completion) completion.textContent = `${pct}%`;
+        if (progress) progress.style.width = `${pct}%`;
+    };
+
+    const setUserBasics = () => {
+        if (welcome) welcome.textContent = `Bienvenido, ${usuario.nombre || 'Cliente'}`;
+        if (emailLbl) emailLbl.textContent = usuario.correo || '';
+        if (email) email.value = usuario.correo || '';
+    };
+    setUserBasics();
+
+    const loadProfile = async () => {
         try {
-            return fecha?.toDate().toLocaleDateString('es-CL') || '-';
-        } catch (_) {
-            return '-';
+            const snap = await db.collection('usuarios').doc(usuario.id).get();
+            if (!snap.exists) return;
+            const data = snap.data();
+            if (fullName && data.nombre) fullName.value = data.nombre;
+            if (phone && data.telefono) phone.value = data.telefono;
+            if (about && data.sobreMi) about.value = data.sobreMi;
+            const prefs = data.preferencias || data.preferences || {};
+            prefEmail.checked = prefs.emailNotifications ?? true;
+            prefVeg.checked = prefs.favVegetables ?? true;
+            prefFruit.checked = prefs.favFruits ?? true;
+            prefOrg.checked = prefs.favOrganic ?? false;
+            updateCompletion();
+        } catch (e) {
+            console.error(e);
+            showAlert('No se pudo cargar tu perfil.', 'error');
         }
     };
 
-    const formatCurrency = (valor = 0) => {
+    const loadOrders = async () => {
+        if (ordersBody) ordersBody.innerHTML = '';
+        if (noOrders) noOrders.style.display = 'none';
+        if (ordersTable) ordersTable.style.display = 'table';
         try {
-            return (valor || 0).toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
-        } catch (_) {
-            return `$${(valor || 0).toLocaleString()}`;
+            const snap = await db.collection('pedidos')
+                .where('usuarioId', '==', usuario.id)
+                .orderBy('fecha', 'desc')
+                .get();
+            if (snap.empty) {
+                if (ordersTable) ordersTable.style.display = 'none';
+                if (noOrders) noOrders.style.display = 'block';
+                totalOrdersEl.textContent = completedOrdersEl.textContent = pendingOrdersEl.textContent = '0';
+                totalSpentEl.textContent = '$0';
+                return;
+            }
+            let total = 0, completed = 0, pending = 0, spent = 0;
+            snap.forEach(doc => {
+                const data = doc.data();
+                const status = normalizeStatus(data.estado || data.status || '');
+                const row = ordersBody.insertRow();
+                row.dataset.status = status;
+                row.innerHTML = `
+                    <td>#${doc.id.substring(0,8)}</td>
+                    <td>${formatDate(data.fecha || data.date)}</td>
+                    <td>${data.productos?.length || data.items?.length || 0} productos</td>
+                    <td>${formatMoney(data.total)}</td>
+                    <td><span class="badge-status ${statusClass(status)}">${statusLabel(status)}</span></td>
+                    <td><button class="btn btn-secondary btn-sm" onclick="alert('Detalle pronto disponible')">Ver</button></td>
+                `;
+                total++;
+                if (status === 'entregado') { completed++; spent += data.total || 0; }
+                if (status === 'pendiente' || status === 'procesando') pending++;
+            });
+            totalOrdersEl.textContent = total;
+            completedOrdersEl.textContent = completed;
+            pendingOrdersEl.textContent = pending;
+            totalSpentEl.textContent = formatMoney(spent);
+        } catch (e) {
+            console.error(e);
+            showAlert('No se pudieron cargar tus compras.', 'error');
         }
     };
 
-    const getStatusLabel = (status) => {
-        switch (status) {
-            case 'entregado': return 'Entregado';
-            case 'pendiente': return 'Pendiente';
-            case 'procesando': return 'En proceso';
-            case 'cancelado': return 'Cancelado';
-            default: return status || 'Desconocido';
+    const loadAddresses = async () => {
+        if (!addressesContainer) return;
+        addressesContainer.innerHTML = '<p class="muted">Cargando direcciones...</p>';
+        try {
+            const snap = await db.collection('direcciones')
+                .where('usuarioId', '==', usuario.id)
+                .orderBy('fechaCreacion', 'desc')
+                .get();
+            if (snap.empty) {
+                addressesContainer.innerHTML = '<div class="empty">No tienes direcciones guardadas.</div>';
+                return;
+            }
+            addressesContainer.innerHTML = '';
+            snap.forEach(doc => {
+                const d = doc.data();
+                const card = document.createElement('div');
+                card.className = 'address-card';
+                card.innerHTML = `
+                    <h4>${d.alias || 'Dirección'}</h4>
+                    <p><strong>Dirección:</strong> ${d.direccion || 'N/D'}</p>
+                    <p><strong>Comuna:</strong> ${d.comuna || 'N/D'}</p>
+                    <p><strong>Región:</strong> ${d.region || 'N/D'}</p>
+                    <p><strong>Teléfono:</strong> ${d.telefono || 'N/D'}</p>
+                `;
+                addressesContainer.appendChild(card);
+            });
+        } catch (e) {
+            console.error(e);
+            addressesContainer.innerHTML = '<div class="empty">No se pudo cargar direcciones.</div>';
         }
     };
 
-    const getStatusClass = (status) => {
-        switch (status) {
-            case 'entregado': return 'bg-success';
-            case 'pendiente': return 'bg-warning';
-            case 'procesando': return 'bg-info';
-            case 'cancelado': return 'bg-danger';
-            default: return 'bg-secondary';
+    const loadWishlist = async () => {
+        if (!wishlistContainer) return;
+        wishlistContainer.innerHTML = '';
+        try {
+            const snap = await db.collection('wishlist')
+                .where('usuarioId', '==', usuario.id)
+                .get();
+            if (snap.empty) {
+                emptyWishlist.style.display = 'block';
+                return;
+            }
+            emptyWishlist.style.display = 'none';
+            snap.forEach(doc => {
+                const p = doc.data();
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${p.image || 'https://via.placeholder.com/300x200?text=Producto'}" alt="${p.name || 'Producto'}">
+                    <h4>${p.name || 'Producto'}</h4>
+                    <p>${formatMoney(p.price)}</p>
+                `;
+                wishlistContainer.appendChild(card);
+            });
+        } catch (e) {
+            console.error(e);
+            emptyWishlist.style.display = 'block';
         }
-    };
-
-    const updateOrderStats = (total, completed, pending, spent) => {
-        document.getElementById('total-orders').textContent = total;
-        document.getElementById('completed-orders').textContent = completed;
-        document.getElementById('pending-orders').textContent = pending;
-        document.getElementById('total-spent').textContent = `$${spent.toLocaleString()}`;
     };
 
     // Guardar perfil
-    const profileForm = document.getElementById('profile-form');
     if (profileForm) {
         profileForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const saveButton = profileForm.querySelector('button[type="submit"]');
-            const originalText = saveButton.innerHTML;
-
+            const payload = {
+                nombre: fullName.value,
+                telefono: phone.value,
+                sobreMi: about.value,
+                ultimaActualizacion: new Date()
+            };
             try {
-                saveButton.disabled = true;
-                saveButton.innerHTML = '<span class="loading-spinner"></span> Guardando...';
-
-                const profileData = {
-                    nombre: document.getElementById('fullName').value,
-                    telefono: document.getElementById('phone').value,
-                    sobreMi: document.getElementById('about').value,
-                    ultimaActualizacion: new Date()
-                };
-
-                await db.collection('usuarios').doc(usuario.id).set(profileData, { merge: true });
-
-                // Actualizar localStorage
-                usuario.nombre = profileData.nombre;
-                localStorage.setItem('usuario', JSON.stringify(usuario));
-
-                // Actualizar mensaje de bienvenida
-                if (welcomeMessage) {
-                    welcomeMessage.textContent = `Bienvenido, ${profileData.nombre}`;
+                await db.collection('usuarios').doc(usuario.id).set(payload, { merge: true });
+                if (auth.currentUser && payload.nombre) {
+                    await auth.currentUser.updateProfile({ displayName: payload.nombre });
                 }
-
-                // Mostrar mensaje de éxito
-                showAlert('Perfil actualizado correctamente', 'success');
-                updateProfileCompletion();
-            } catch (error) {
-                console.error("Error guardando perfil:", error);
-                showAlert('Error al guardar el perfil', 'error');
-            } finally {
-                saveButton.disabled = false;
-                saveButton.innerHTML = originalText;
-            }
-        });
-
-        // Actualizar progreso al cambiar campos
-        ['fullName', 'phone', 'about'].forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            if (field) {
-                field.addEventListener('input', updateProfileCompletion);
+                usuario.nombre = payload.nombre;
+                localStorage.setItem('usuario', JSON.stringify(usuario));
+                setUserBasics();
+                updateCompletion();
+                showAlert('Perfil guardado.', 'success');
+            } catch (err) {
+                console.error(err);
+                showAlert('No se pudo guardar el perfil.', 'error');
             }
         });
     }
 
     // Guardar preferencias
-    const preferencesForm = document.getElementById('save-preferences');
-    if (preferencesForm) {
-        preferencesForm.addEventListener('click', async () => {
+    if (savePrefs) {
+        savePrefs.addEventListener('click', async () => {
+            const prefs = {
+                emailNotifications: prefEmail.checked,
+                favVegetables: prefVeg.checked,
+                favFruits: prefFruit.checked,
+                favOrganic: prefOrg.checked
+            };
             try {
-                const preferences = {
-                    emailNotifications: document.getElementById('emailNotifications').checked,
-                    favVegetables: document.getElementById('favVegetables').checked,
-                    favFruits: document.getElementById('favFruits').checked,
-                    favOrganic: document.getElementById('favOrganic').checked
-                };
+                await db.collection('usuarios').doc(usuario.id).set({ preferencias: prefs }, { merge: true });
+                showAlert('Preferencias guardadas.', 'success');
+            } catch (e) {
+                console.error(e);
+                showAlert('No se pudo guardar preferencias.', 'error');
+            }
+        });
+    }
 
-                await db.collection('usuarios').doc(usuario.id).set({
-                    preferencias: preferences
-                }, { merge: true });
-
-                showAlert('Preferencias actualizadas', 'success');
-            } catch (error) {
-                console.error("Error guardando preferencias:", error);
-                showAlert('Error al guardar preferencias', 'error');
+    // Añadir dirección rápida
+    if (addAddressBtn) {
+        addAddressBtn.addEventListener('click', async () => {
+            const alias = prompt('Nombre o alias de la dirección (Casa, Oficina, etc.):');
+            if (alias === null) return;
+            const direccion = prompt('Dirección completa:');
+            if (direccion === null) return;
+            const comuna = prompt('Comuna:');
+            if (comuna === null) return;
+            const region = prompt('Región:');
+            if (region === null) return;
+            const telefono = prompt('Teléfono:');
+            if (telefono === null) return;
+            try {
+                await db.collection('direcciones').add({
+                    usuarioId: usuario.id,
+                    alias: alias || 'Dirección',
+                    direccion: direccion || '',
+                    comuna: comuna || '',
+                    region: region || '',
+                    telefono: telefono || '',
+                    fechaCreacion: new Date()
+                });
+                showAlert('Dirección guardada.', 'success');
+                loadAddresses();
+            } catch (e) {
+                console.error(e);
+                showAlert('No se pudo guardar la dirección.', 'error');
             }
         });
     }
 
     // Filtrar pedidos
-    const orderFilter = document.getElementById('order-filter');
-    if (orderFilter) {
+    if (orderFilter && ordersBody) {
         orderFilter.addEventListener('change', (e) => {
             const status = e.target.value;
-            const rows = document.querySelectorAll('#orders-body tr');
-
-            rows.forEach(row => {
-                const rowStatus = row.dataset.status || '';
-                if (status === 'todos' || rowStatus === status) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+            ordersBody.querySelectorAll('tr').forEach(row => {
+                const st = row.dataset.status || '';
+                row.style.display = (status === 'todos' || st === status) ? '' : 'none';
             });
         });
     }
 
-    // Ver pedido (placeholder)
-    window.viewOrder = (orderId) => {
-        showAlert(`Detalle del pedido #${orderId.substring(0, 8)} pronto disponible`, 'info');
-    };
-
-    // Cerrar sesión
+    // Logout
     if (logoutLink) {
         logoutLink.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -326,31 +366,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 await auth.signOut();
                 localStorage.removeItem('usuario');
                 window.location.href = 'login.html';
-            } catch (error) {
-                console.error("Error cerrando sesión:", error);
+            } catch (err) {
+                console.error(err);
             }
         });
     }
 
-    // Mostrar alerta
-    const showAlert = (message, type) => {
-        const alertDiv = document.createElement('div');
-        const alertType = type === 'error' ? 'danger' : (type === 'info' ? 'info' : 'success');
-        alertDiv.className = `alert alert-${alertType}`;
-        alertDiv.textContent = message;
-
-        const container = document.querySelector('.container');
-        if (container) {
-            container.insertBefore(alertDiv, container.firstChild);
-
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 3000);
-        }
-    };
-
-    // Cargar datos iniciales
-    loadUserData();
-    loadUserOrders();
-    updateProfileCompletion();
+    loadProfile();
+    loadOrders();
+    loadAddresses();
+    loadWishlist();
+    updateCompletion();
 });
+

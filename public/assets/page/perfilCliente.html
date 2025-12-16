@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,210 +9,135 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-
 <body>
     <header class="header">
-        <div class="container">
+        <div class="container header__content">
             <div class="logo">
-                <i class="fas fa-leaf"></i>
-                <span>HuertoHogar</span>
+                <i class="fas fa-leaf"></i><span>HuertoHogar</span>
             </div>
             <nav class="nav">
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="nosotros.html">Nosotros</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
-                    <li><a href="catalogo.html">Catalogo</a></li>
-                    <li><a href="carrito.html"><i class="bi bi-cart3"></i> Carrito(<span id="cart-count">0</span>)</a>
-                    </li>
-                    <li><a href="login.html" id="logout-link">Cerrar Sesión</a></li>
-                </ul>
+                <a href="../index.html">Inicio</a>
+                <a href="catalogo.html">Catálogo</a>
+                <a href="blog.html">Blog</a>
+                <a href="contacto.html">Contacto</a>
+                <a href="carrito.html"><i class="bi bi-cart3"></i> Carrito(<span id="cart-count">0</span>)</a>
+                <a href="login.html" id="logout-link">Cerrar sesión</a>
             </nav>
         </div>
     </header>
 
-    <section class="profile-header">
-        <div class="container">
-            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                alt="Foto de perfil" class="profile-avatar" id="profile-avatar">
-            <h1 id="welcome-message">Bienvenido, Cliente</h1>
-            <p id="user-email">cargando...</p>
-            <div class="mt-3">
-                <button class="btn btn-logout" id="edit-profile-btn">Editar Perfil</button>
-            </div>
-        </div>
-    </section>
-
-    <div class="container">
-        <!-- Profile Completion -->
-        <div class="profile-completion">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="completion-text">Completitud de tu perfil</span>
-                <span class="completion-text" id="completion-percentage">0%</span>
-            </div>
-            <div class="progress-custom">
-                <div class="progress-bar" id="profile-progress" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3 col-sm-6">
-                <div class="stats-card">
-                    <div class="stats-icon">
-                        <i class="fas fa-shopping-bag"></i>
+    <main class="main">
+        <section class="profile-hero">
+            <div class="container profile-hero__grid">
+                <div class="profile-hero__left">
+                    <img id="profile-avatar" class="profile-avatar" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar de usuario">
+                    <div class="avatar-actions">
+                        <label for="avatar-input" class="btn btn-light">
+                            <i class="fas fa-camera"></i> Cambiar foto
+                        </label>
+                        <input type="file" id="avatar-input" accept="image/*" hidden>
                     </div>
-                    <div class="stats-number" id="total-orders">0</div>
-                    <div class="stats-label">Pedidos Totales</div>
+                </div>
+                <div class="profile-hero__right">
+                    <p class="eyebrow">Mi cuenta</p>
+                    <h1 id="welcome-message">Bienvenido, Cliente</h1>
+                    <p id="user-email" class="muted">cargando...</p>
+                    <div class="tags">
+                        <span class="tag">Cliente</span>
+                        <span class="tag">HuertoHogar</span>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="stats-card">
-                    <div class="stats-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stats-number" id="completed-orders">0</div>
-                    <div class="stats-label">Pedidos Completados</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="stats-card">
-                    <div class="stats-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stats-number" id="pending-orders">0</div>
-                    <div class="stats-label">Pedidos Pendientes</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="stats-card">
-                    <div class="stats-icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <div class="stats-number" id="total-spent">$0</div>
-                    <div class="stats-label">Total Gastado</div>
-                </div>
-            </div>
-        </div>
+        </section>
 
-        <!-- Tabs Navigation -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <ul class="nav nav-tabs-custom" id="profileTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile"
-                            type="button" role="tab">
-                            <i class="fas fa-user-circle me-2"></i>Mi Perfil
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders"
-                            type="button" role="tab">
-                            <i class="fas fa-shopping-bag me-2"></i>Mis Pedidos
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="address-tab" data-bs-toggle="tab" data-bs-target="#address"
-                            type="button" role="tab">
-                            <i class="fas fa-map-marker-alt me-2"></i>Mis Direcciones
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="wishlist-tab" data-bs-toggle="tab" data-bs-target="#wishlist"
-                            type="button" role="tab">
-                            <i class="fas fa-heart me-2"></i>Mi Lista de Deseos
-                        </button>
-                    </li>
-                </ul>
+        <section class="container">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Pedidos totales</div>
+                    <div class="stat-value" id="total-orders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completados</div>
+                    <div class="stat-value" id="completed-orders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pendientes</div>
+                    <div class="stat-value" id="pending-orders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total gastado</div>
+                    <div class="stat-value" id="total-spent">$0</div>
+                </div>
+                <div class="stat-card progress-card">
+                    <div class="stat-label">Completitud de perfil</div>
+                    <div class="stat-value" id="completion-percentage">0%</div>
+                    <div class="progress-custom">
+                        <div class="progress-bar" id="profile-progress" style="width:0%"></div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Tabs Content -->
-        <div class="tab-content" id="profileTabsContent">
-            <!-- Profile Tab -->
-            <div class="tab-pane fade show active" id="profile" role="tabpanel">
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="profile-card">
-                            <div class="card-header-custom">
-                                <h3><i class="fas fa-user-edit me-2"></i>Información Personal</h3>
-                            </div>
-                            <div class="card-body">
-                                <form id="profile-form">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Nombre Completo</label>
-                                            <input type="text" class="form-control-custom" id="fullName"
-                                                placeholder="Ingresa tu nombre">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Correo Electrónico</label>
-                                            <input type="email" class="form-control-custom" id="email" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Teléfono</label>
-                                            <input type="tel" class="form-control-custom" id="phone"
-                                                placeholder="Ingresa tu teléfono">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Fecha de Registro</label>
-                                            <input type="text" class="form-control-custom" id="registrationDate"
-                                                disabled>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Sobre Mí</label>
-                                        <textarea class="form-control-custom" id="about" rows="3"
-                                            placeholder="Cuéntanos sobre ti"></textarea>
-                                    </div>
-                                    <button type="submit" class="btn-custom" id="save-profile">
-                                        <i class="fas fa-save me-2"></i>Guardar Cambios
+        <section class="container">
+            <div class="tabs">
+                <button class="tab-btn active" data-target="tab-profile"><i class="fas fa-user"></i> Perfil</button>
+                <button class="tab-btn" data-target="tab-orders"><i class="fas fa-receipt"></i> Compras</button>
+                <button class="tab-btn" data-target="tab-addresses"><i class="fas fa-map-marker-alt"></i> Direcciones</button>
+                <button class="tab-btn" data-target="tab-wishlist"><i class="fas fa-heart"></i> Favoritos</button>
+            </div>
+
+            <div class="tab-panel active" id="tab-profile">
+                <div class="panel-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-id-card"></i> Datos personales</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="profile-form" class="form-grid">
+                                <label>Nombre completo
+                                    <input type="text" id="fullName" placeholder="Tu nombre">
+                                </label>
+                                <label>Correo electrónico
+                                    <input type="email" id="email" disabled>
+                                </label>
+                                <label>Teléfono
+                                    <input type="tel" id="phone" placeholder="Ej: +56 9 ...">
+                                </label>
+                                <label>Sobre mí
+                                    <textarea id="about" rows="3" placeholder="Cuéntanos sobre ti"></textarea>
+                                </label>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary" id="save-profile">
+                                        <i class="fas fa-save"></i> Guardar
                                     </button>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="profile-card">
-                            <div class="card-header-custom">
-                                <h4><i class="fas fa-cog me-2"></i>Preferencias</h4>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-sliders-h"></i> Preferencias</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="switch">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <label for="emailNotifications">Recibir notificaciones por email</label>
                             </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <label class="form-label">Notificaciones por Email</label>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-                                        <label class="form-check-label" for="emailNotifications">
-                                            Recibir notificaciones
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Productos Favoritos</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="favVegetables" checked>
-                                        <label class="form-check-label" for="favVegetables">
-                                            Verduras
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="favFruits" checked>
-                                        <label class="form-check-label" for="favFruits">
-                                            Frutas
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="favOrganic">
-                                        <label class="form-check-label" for="favOrganic">
-                                            Productos Orgánicos
-                                        </label>
-                                    </div>
-                                </div>
-                                <button class="btn-outline-primary w-100" id="save-preferences">
-                                    <i class="fas fa-sync-alt me-2"></i>Actualizar Preferencias
+                            <div class="checkbox">
+                                <input type="checkbox" id="favVegetables" checked>
+                                <label for="favVegetables">Verduras</label>
+                            </div>
+                            <div class="checkbox">
+                                <input type="checkbox" id="favFruits" checked>
+                                <label for="favFruits">Frutas</label>
+                            </div>
+                            <div class="checkbox">
+                                <input type="checkbox" id="favOrganic">
+                                <label for="favOrganic">Productos orgánicos</label>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-secondary" id="save-preferences">
+                                    <i class="fas fa-sync-alt"></i> Guardar preferencias
                                 </button>
                             </div>
                         </div>
@@ -221,166 +145,100 @@
                 </div>
             </div>
 
-            <!-- Orders Tab -->
-            <div class="tab-pane fade" id="orders" role="tabpanel">
-                <div class="profile-card">
-                    <div class="card-header-custom d-flex justify-content-between align-items-center">
-                        <h3><i class="fas fa-history me-2"></i>Historial de Pedidos</h3>
-                        <div>
-                            <select class="form-control-custom" id="order-filter" style="width: auto;">
-                                        <option value="todos">Todos los pedidos</option>
-                                        <option value="pendiente">Pendientes</option>
-                                        <option value="procesando">En proceso</option>
-                                        <option value="entregado">Entregados</option>
-                                        <option value="cancelado">Cancelados</option>
-                            </select>
-                        </div>
+            <div class="tab-panel" id="tab-orders">
+                <div class="card">
+                    <div class="card-header card-header--split">
+                        <h3><i class="fas fa-box-open"></i> Mis compras</h3>
+                        <select id="order-filter">
+                            <option value="todos">Todos</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="procesando">En proceso</option>
+                            <option value="entregado">Entregados</option>
+                            <option value="cancelado">Cancelados</option>
+                        </select>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table" id="orders-table">
                                 <thead>
                                     <tr>
-                                        <th>ID Pedido</th>
+                                        <th>ID</th>
                                         <th>Fecha</th>
                                         <th>Productos</th>
                                         <th>Total</th>
                                         <th>Estado</th>
-                                        <th>Acciones</th>
+                                        <th>Acción</th>
                                     </tr>
                                 </thead>
-                                <tbody id="orders-body">
-                                    <!-- Las órdenes se cargarán aquí dinámicamente -->
-                                </tbody>
+                                <tbody id="orders-body"></tbody>
                             </table>
                         </div>
-                        <div class="text-center" id="no-orders" style="display: none;">
-                            <i class="fas fa-shopping-bag fa-3x mb-3 text-muted"></i>
-                            <h4>No tienes pedidos aún</h4>
-                            <p>¡Comienza a comprar productos frescos en nuestro catálogo!</p>
-                            <a href="catalogo.html" class="btn-custom">
-                                <i class="fas fa-store me-2"></i>Ir al Catálogo
-                            </a>
+                        <div id="no-orders" class="empty" style="display:none;">
+                            <p>No tienes compras aún.</p>
+                            <a class="btn btn-primary" href="catalogo.html"><i class="fas fa-store"></i> Ir al catálogo</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Address Tab -->
-            <div class="tab-pane fade" id="address" role="tabpanel">
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="profile-card">
-                            <div class="card-header-custom d-flex justify-content-between align-items-center">
-                                <h3><i class="fas fa-map-marked-alt me-2"></i>Mis Direcciones</h3>
-                                <button class="btn-custom" id="add-address-btn">
-                                    <i class="fas fa-plus me-2"></i>Agregar Dirección
-                                </button>
-                            </div>
-                            <div class="card-body">
-                                <div class="row" id="addresses-container">
-                                    <!-- Las direcciones se cargarán aquí dinámicamente -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="profile-card">
-                            <div class="card-header-custom">
-                                <h4><i class="fas fa-info-circle me-2"></i>Información de Envío</h4>
-                            </div>
-                            <div class="card-body">
-                                <p><strong>Zonas de Entrega:</strong></p>
-                                <ul class="list-unstyled">
-                                    <li><i class="fas fa-check text-success me-2"></i>Santiago (24-48h)</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Valparaíso (48-72h)</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Concepción (72-96h)</li>
-                                </ul>
-                                <p class="text-muted small mt-3">
-                                    <i class="fas fa-exclamation-circle me-2"></i>
-                                    Los pedidos realizados antes de las 12:00 PM se entregan al día siguiente.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Wishlist Tab -->
-            <div class="tab-pane fade" id="wishlist" role="tabpanel">
-                <div class="profile-card">
-                    <div class="card-header-custom">
-                        <h3><i class="fas fa-heart me-2"></i>Mi Lista de Deseos</h3>
+            <div class="tab-panel" id="tab-addresses">
+                <div class="card">
+                    <div class="card-header card-header--split">
+                        <h3><i class="fas fa-map-marked-alt"></i> Mis direcciones</h3>
+                        <button class="btn btn-primary" id="add-address-btn"><i class="fas fa-plus"></i> Agregar</button>
                     </div>
                     <div class="card-body">
-                        <div class="row" id="wishlist-container">
-                            <!-- Los productos de la lista de deseos se cargarán aquí -->
-                        </div>
-                        <div class="text-center" id="empty-wishlist" style="display: none;">
-                            <i class="fas fa-heart fa-3x mb-3 text-muted"></i>
-                            <h4>Tu lista de deseos está vacía</h4>
-                            <p>¡Agrega productos que te gusten para comprarlos después!</p>
-                            <a href="catalogo.html" class="btn-custom">
-                                <i class="fas fa-store me-2"></i>Explorar Productos
-                            </a>
-                        </div>
+                        <div class="card-grid" id="addresses-container"></div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Recent Activity -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="profile-card">
-                    <div class="card-header-custom">
-                        <h3><i class="fas fa-bell me-2"></i>Actividad Reciente</h3>
+            <div class="tab-panel" id="tab-wishlist">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-heart"></i> Favoritos</h3>
                     </div>
                     <div class="card-body">
-                        <div class="activity-timeline" id="activity-timeline">
-                            <!-- La actividad se cargará aquí dinámicamente -->
+                        <div class="product-grid" id="wishlist-container"></div>
+                        <div id="empty-wishlist" class="empty" style="display:none;">
+                            <p>Tu lista de deseos está vacía.</p>
+                            <a class="btn btn-primary" href="catalogo.html"><i class="fas fa-store"></i> Explorar productos</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>HuertoHogar</h3>
-                    <p>Conectando el campo con tu hogar desde 2017</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Contacto</h3>
-                    <p><i class="fas fa-phone"></i> +56 9 1234 5678</p>
-                    <p><i class="fas fa-envelope"></i> info@huertohogar.cl</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Síguenos</h3>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                    </div>
+        <div class="container footer__grid">
+            <div>
+                <h4>HuertoHogar</h4>
+                <p>Conectando el campo con tu hogar desde 2017</p>
+            </div>
+            <div>
+                <h4>Contacto</h4>
+                <p><i class="fas fa-phone"></i> +56 9 1234 5678</p>
+                <p><i class="fas fa-envelope"></i> info@huertohogar.cl</p>
+            </div>
+            <div>
+                <h4>Síguenos</h4>
+                <div class="social">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 HuertoHogar. Todos los derechos reservados.</p>
-            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 HuertoHogar. Todos los derechos reservados.</p>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Firebase v8 -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <!-- Tu perfilCliente.js -->
     <script src="../js/perfilCliente.js"></script>
 </body>
-
 </html>
