@@ -21,8 +21,9 @@
         <button id="btnBuscar" class="btn-buscar">Buscar</button>
       </div>
       <div class="auth-buttons">
-        <button class="btn-login">Iniciar Sesión</button>
-        <button class="btn-signup">Crear Cuenta</button>
+        <a class="btn-login" id="nav-login" href="login.html">Iniciar Sesión</a>
+        <a class="btn-signup" id="nav-logout" href="#" style="display:none;">Cerrar Sesión</a>
+        <span id="nav-username"></span>
       </div>
     </div>
 
@@ -44,7 +45,7 @@
         <button class="btn-carrito" onclick="window.location.href='carrito.html'">
           <!--Cambiar a "carrito" para React Router-->
           <span class="carrito-icon">🛒</span>
-          Total: $<span class="carrito-total">0</span>
+          Total: $<span class="carrito-total" id="cart-count">0</span>
         </button>
       </div>
     </nav>
@@ -97,6 +98,7 @@
     </div>
   </main>
 
+  <script src="../js/auth-header.js"></script>
   <script src="../js/carrito.js"></script>
 </body>
 

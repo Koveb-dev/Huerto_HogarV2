@@ -146,6 +146,21 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const usr = JSON.parse(localStorage.getItem('usuario'));
+                const navLogin = document.getElementById('nav-login');
+                const navLogout = document.getElementById('nav-logout');
+                const navUser = document.getElementById('nav-username');
+                if (usr && usr.id) {
+                    if (navLogin) navLogin.style.display = 'none';
+                    if (navLogout) navLogout.style.display = 'inline-flex';
+                    if (navUser) navUser.textContent = usr.nombre || usr.correo || 'Cliente';
+                }
+            } catch (_) {}
+        });
+    </script>
     <script src="../js/auth-header.js"></script>
     <script src="../js/nosotros.js"></script>
 </body>

@@ -28,7 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Inicializar Firebase
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
   const db = firebase.firestore();
 
   // Inicializar la aplicación
