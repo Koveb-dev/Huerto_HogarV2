@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ofertas - HuertoHogar</title>
+  <link rel="stylesheet" href="../css/ofertas.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-top">
+      <div class="logo-container">
+        <i class="fas fa-leaf"></i>
+        <span>HuertoHogar</span>
+      </div>
+      <div class="search-container">
+        <select id="filtroCategoria" class="search-select">
+          <option value="">Todas las categorías</option>
+        </select>
+        <button id="btnFiltrar" class="btn-buscar">Filtrar</button>
+      </div>
+      <div class="auth-buttons">
+        <button class="btn-login" onclick="window.location.href='login.html'">Iniciar Sesión</button>
+        <button class="btn-signup" onclick="window.location.href='registro.html'">Crear Cuenta</button>
+      </div>
+    </div>
+
+    <nav class="nav-main">
+      <div class="nav-center">
+        <a href="index.html" class="nav-link">Inicio</a>
+        <a href="catalogo.html" class="nav-link">Catálogo</a>
+        <a href="ofertas.html" class="nav-link active">Ofertas</a>
+        <a href="contacto.html" class="nav-link">Contacto</a>
+      </div>
+      <div class="nav-right">
+        <button class="btn-carrito" onclick="window.location.href='carrito.html'">
+          <span class="carrito-icon"><i class="bi bi-cart3"></i></span>
+          Carrito
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="main">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Descuentos activos</p>
+        <h1>Ofertas de temporada</h1>
+        <p class="hero-subtitle">Aprovecha precios especiales en productos seleccionados.</p>
+      </div>
+    </section>
+
+    <section class="ofertas-section">
+      <div class="section-header">
+        <h2>Ofertas</h2>
+        <span id="contadorOfertas" class="badge-oferta">0 productos</span>
+      </div>
+      <div id="gridOfertas" class="ofertas-grid">
+        <div class="placeholder">Cargando ofertas...</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>HuertoHogar</h3>
+          <p>Conectando el campo con tu hogar desde 2017</p>
+        </div>
+        <div class="footer-section">
+          <h3>Contacto</h3>
+          <p><i class="fas fa-phone"></i> +56 9 1234 5678</p>
+          <p><i class="fas fa-envelope"></i> info@huertohogar.cl</p>
+        </div>
+        <div class="footer-section">
+          <h3>Síguenos</h3>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 HuertoHogar. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/ofertas.js"></script>
+</body>
+
+</html>
