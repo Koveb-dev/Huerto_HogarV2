@@ -9,14 +9,14 @@ class DashboardManager {
 
     async init() {
         console.log('Iniciando DashboardManager...');
-        
+
         // Inicializar Firebase
         await this.inicializarFirebase();
-        
+
         // Configurar navegación
         this.configurarNavegacion();
         this.inicializarNavegacion();
-        
+
         // Cargar estadísticas
         await this.cargarEstadisticasReales();
     }
@@ -24,15 +24,15 @@ class DashboardManager {
     async inicializarFirebase() {
         try {
             console.log('Inicializando Firebase...');
-            
+
             const firebaseConfig = {
-                apiKey: "AIzaSyBBT7jka7a-7v3vY19BlSajamiedLrBTN0",
-                authDomain: "tiendanombretienda.firebaseapp.com",
-                projectId: "tiendanombretienda",
-                storageBucket: "tiendanombretienda.appspot.com",
-                messagingSenderId: "408928911689",
-                appId: "1:408928911689:web:d8b313c7e15fc528661a98",
-                measurementId: "G-Y1DW47VEWZ"
+                apiKey: "AIzaSyB5oGPbt9KLa--5l9OIeGisggYV33if2Xg",
+                authDomain: "tiendahuertohogar-2ce3a.firebaseapp.com",
+                projectId: "tiendahuertohogar-2ce3a",
+                storageBucket: "tiendahuertohogar-2ce3a.appspot.com",
+                messagingSenderId: "857983411223",
+                appId: "1:857983411223:web:a1c200cd07b7fd63b36852",
+                measurementId: "G-TX342PY82Y"
             };
 
             if (typeof firebase === 'undefined') {
@@ -43,13 +43,13 @@ class DashboardManager {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
-            
+
             this.db = firebase.firestore();
             this.firebaseInicializado = true;
-            
+
             console.log('Firebase inicializado correctamente');
             return true;
-            
+
         } catch (error) {
             console.error('Error inicializando Firebase:', error);
             return false;
@@ -79,12 +79,12 @@ class DashboardManager {
         sections.forEach(section => {
             section.style.display = 'none';
         });
-        
+
         const targetSection = document.getElementById(seccion);
         if (targetSection) {
             targetSection.style.display = 'block';
         }
-        
+
         const menuLinks = document.querySelectorAll('.menu-link');
         menuLinks.forEach(link => {
             link.classList.remove('active');
@@ -106,13 +106,13 @@ class DashboardManager {
             this.usarDatosEjemplo();
             return;
         }
-        
+
         try {
             this.estaCargando = true;
             this.mostrarEstadoCarga(true);
-            
+
             console.log('Cargando estadísticas REALES de Firebase...');
-            
+
             const [
                 totalCompras,
                 proyeccion,
@@ -140,7 +140,7 @@ class DashboardManager {
 
             console.log('Estadísticas REALES obtenidas:', this.estadisticas);
             this.actualizarUI();
-            
+
         } catch (error) {
             console.error('Error cargando estadísticas reales:', error);
             this.usarDatosEjemplo();
@@ -180,7 +180,7 @@ class DashboardManager {
             const comprasAnterior = snapshotAnterior.size;
 
             if (comprasAnterior === 0) return comprasActual > 0 ? 100 : 0;
-            
+
             const aumento = ((comprasActual - comprasAnterior) / comprasAnterior) * 100;
             return Math.round(aumento);
         } catch (error) {
@@ -203,12 +203,12 @@ class DashboardManager {
         try {
             const snapshot = await this.db.collection("producto").get();
             let totalInventario = 0;
-            
+
             snapshot.forEach(doc => {
                 const producto = doc.data();
                 totalInventario += producto.cantidad || producto.stock || 0;
             });
-            
+
             return totalInventario;
         } catch (error) {
             console.error("Error al calcular inventario:", error);
@@ -235,7 +235,7 @@ class DashboardManager {
             const snapshot = await this.db.collection("usuario")
                 .where("createdAt", ">=", inicioMes)
                 .get();
-            
+
             return snapshot.size;
         } catch (error) {
             console.error("Error al obtener nuevos usuarios:", error);
@@ -284,11 +284,11 @@ class DashboardManager {
     mostrarEstadoCarga(mostrar) {
         const cards = document.querySelectorAll('.summary-card');
         const botones = document.querySelectorAll('.nav-button');
-        
+
         cards.forEach(card => {
             card.classList.toggle('cargando', mostrar);
         });
-        
+
         botones.forEach(boton => {
             boton.style.opacity = mostrar ? '0.6' : '1';
         });
