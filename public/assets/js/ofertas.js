@@ -103,3 +103,4 @@ function agregarCarrito(id) {
     alert('Agregar al carrito (pendiente de integración). ID: ' + id);
 }
 
+
