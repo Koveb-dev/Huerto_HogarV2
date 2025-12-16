@@ -6,6 +6,9 @@
   <title>Compra Exitosa - Mi Tienda</title>
   <link rel="stylesheet" href="../css/catalogo.css">
   <link rel="stylesheet" href="../css/carrito.css">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
   <!-- HEADER -->
@@ -16,8 +19,9 @@
         <button id="btnBuscar" class="btn-buscar">Buscar</button>
       </div>
       <div class="auth-buttons">
-        <button class="btn-login">Iniciar Sesión</button>
-        <button class="btn-signup">Crear Cuenta</button>
+        <a class="btn-login" id="nav-login" href="login.html">Iniciar Sesión</a>
+        <a class="btn-signup" id="nav-logout" href="#" style="display:none;">Cerrar Sesión</a>
+        <span id="nav-username"></span>
       </div>
     </div>
 
@@ -28,16 +32,16 @@
           <a href="#" class="nav-link">Categoría ⌄</a>
           <div class="dropdown-content" id="dropdownCategorias"></div>
         </div>
-        <a href="#" class="nav-link">Ofertas</a>
-        <a href="#" class="nav-link">Nosotros</a>
-        <a href="#" class="nav-link">Blog</a>
-        <a href="#" class="nav-link">Contacto</a>
+        <a href="ofertas.html" class="nav-link">Ofertas</a>
+        <a href="nosotros.html" class="nav-link">Nosotros</a>
+        <a href="blog.html" class="nav-link">Blog</a>
+        <a href="contacto.html" class="nav-link">Contacto</a>
       </div>
       
       <div class="nav-right">
         <button class="btn-carrito" onclick="window.location.href='carrito.html'">
           <span class="carrito-icon">🛒</span>
-          Total: $<span class="carrito-total">0</span>
+          Total: $<span class="carrito-total" id="cart-count">0</span>
         </button>
       </div>
     </nav>
@@ -146,6 +150,22 @@
 
   <!-- Incluir SweetAlert2 antes de tu script -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const usr = JSON.parse(localStorage.getItem('usuario'));
+        const navLogin = document.getElementById('nav-login');
+        const navLogout = document.getElementById('nav-logout');
+        const navUser = document.getElementById('nav-username');
+        if (usr && usr.id) {
+          if (navLogin) navLogin.style.display = 'none';
+          if (navLogout) navLogout.style.display = 'inline-flex';
+          if (navUser) navUser.textContent = usr.nombre || usr.correo || 'Cliente';
+        }
+      } catch (_) {}
+    });
+  </script>
+  <script src="../js/auth-header.js"></script>
   <script src="../js/compraExitosa.js"></script>
 </body>
 </html>
