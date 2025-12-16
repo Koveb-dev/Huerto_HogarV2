@@ -631,5 +631,20 @@
     <script src="../js/logout.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/crud-functions.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+                const emailNode = document.getElementById('userEmail');
+                const welcomeNode = document.getElementById('bienvenidoPrincipal');
+                if (emailNode && usuario.correo) emailNode.textContent = usuario.correo;
+                if (welcomeNode && usuario.nombre) {
+                    welcomeNode.textContent = `Bienvenido al Panel de Administración, ${usuario.nombre}`;
+                }
+            } catch (err) {
+                console.warn('No se pudo cargar el usuario para el saludo', err);
+            }
+        });
+    </script>
 </body>
 </html>
