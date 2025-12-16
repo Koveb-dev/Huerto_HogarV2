@@ -9,7 +9,8 @@ const firebaseConfig = {
     measurementId: "G-TX342PY82Y"
 };
 // Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 const db = firebase.firestore();
 
 // Variables globales
@@ -18,9 +19,13 @@ let productosOferta = [];
 
 // Inicializar la aplicación cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function () {
-    inicializarCarrito();
-    cargarProductosOferta();
-    configurarEventos();
+    // Garantizar que la sesión persistente esté lista antes de leer Firestore
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+    auth.onAuthStateChanged(() => {
+        inicializarCarrito();
+        cargarProductosOferta();
+        configurarEventos();
+    });
 });
 
 /**

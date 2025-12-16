@@ -28,8 +28,9 @@
       </div>
       
       <div class="auth-buttons">
-        <button class="btn-login" onclick="window.location.href='/assets/page/login.html'">Iniciar Sesión</button>
-        <button class="btn-signup" onclick="window.location.href='/assets/page/registro.html'">Crear Cuenta</button>
+        <a class="btn-login" id="nav-login" href="/assets/page/login.html">Iniciar Sesión</a>
+        <a class="btn-signup" id="nav-logout" href="#" style="display:none;">Cerrar Sesión</a>
+        <span id="nav-username" class="username-pill"></span>
       </div>
     </div>
 
@@ -53,7 +54,7 @@
       <div class="nav-right">
         <button class="btn-carrito" onclick="window.location.href='carrito.html'">
           <span class="carrito-icon"><i class="bi bi-cart3"></i></span>
-          Total: $<span class="carrito-total">0</span>
+          Total: $<span class="carrito-total" id="cart-count">0</span>
         </button>
       </div>
     </nav>
@@ -103,6 +104,8 @@
     </div>
   </footer>
 
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="../js/auth-header.js"></script>
   <script src="../js/catalogo.js"></script>
 </body>
 
